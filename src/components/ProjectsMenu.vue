@@ -1,0 +1,75 @@
+<template>
+    <off-canvas-body
+        :target_id="canvas_props.target_canvas_id"
+        :height_offset="canvas_props.header_height"
+    >
+        <div class="search-div-style">
+            <input type="text"
+                   :value="modelValue"
+                   @input="changeSearchValue"
+                   class="form-control search-input-style text-white"
+                   placeholder="Поиск">
+        </div>
+        <div v-if="projects.length !=0">
+            <project-view
+                v-for="project in projects"
+                :key="project.id"
+                :project="project"
+            />
+        </div>
+        <div class="text-white text-center fs-4 nothing-style" v-else>
+            Ничего не найдено
+        </div>
+
+    </off-canvas-body> 
+</template>
+
+<script>
+import OffCanvasBody from '@/components/OffCanvasBody.vue'
+import ProjectView from './ProjectView.vue'
+
+export default {
+    components:{
+        OffCanvasBody,
+        ProjectView
+    },
+    props:{
+        canvas_props:{
+            type: Object,
+            reqiured: true
+        },
+        projects:{
+            type: Object,
+            reqiured: true
+        },
+        modelValue:{
+            type: String
+        }
+    },
+    methods: {
+        changeSearchValue: function(event){
+            this.$emit('update:modelValue', event.target.value)
+        }
+    }
+}
+</script>
+
+<style scoped>
+.search-div-style{
+    margin: 5px;
+}
+.search-input-style{
+    background-color: rgba(0, 0, 0, 0.074);
+}
+.search-input-style::placeholder{
+    color: rgba(255, 255, 255, 0.535);
+}
+.search-input-style:focus{
+    box-shadow: 0 0 1px #ebebeb;
+    border:1px solid rgb(255, 255, 255);
+    background-color: rgba(0, 0, 0, 0.074);
+}
+.nothing-style{
+    margin-top: 30px ;
+}
+</style>

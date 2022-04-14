@@ -1,30 +1,32 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </div>
-  <router-view/>
+    <router-view v-slot="{ Component }">
+        <keep-alive>
+            <component :is="Component" :key="$route.fullPath"></component>
+        </keep-alive>
+    </router-view>
 </template>
 
 <style>
-#app {
+* {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-
-#nav {
-  padding: 30px;
+.flex-row{
+  display: flex;
+  flex-direction: row;
 }
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
+.flex-column{
+  display: flex;
+  flex-direction: column;
 }
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.all-window-height{
+    height: 100vh;
+}
+.enable-icon{
+    cursor: pointer;
 }
 </style>
