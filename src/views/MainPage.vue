@@ -37,7 +37,11 @@
     <projects-menu
         :canvas_props="sideMenuProps"
         :projects="searcherProjects"
+        @targetUpdate="updateTargetProject"
         v-model="searchQuery"
+    />
+    <loading
+        v-model="loading"
     />
 </template>
 
@@ -45,12 +49,14 @@
 import YandexMapComponent from '@/components/YandexMapComponent.vue'
 import ToggleButton from '@/components/ToggleButton.vue'
 import ProjectsMenu from '@/components/ProjectsMenu.vue'
+import Loading from '@/components/Loading.vue'
 
 export default {
     components:{
         YandexMapComponent,
         ToggleButton,
         ProjectsMenu,
+        Loading,
     },
     data(){
         return {
@@ -59,26 +65,42 @@ export default {
                 header_height: '50px'
             },
             searchQuery: '',
-            projects:[
-                {id: 1, name: "Побережье", fly_count: 2, object_count:10},
-                {id: 2, name: "Сочи", fly_count: 1, object_count:2},
-                {id: 3, name: "Полеты в Смоленске", fly_count: 40, object_count:15},
-                {id: 4, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
-                {id: 5, name: "Полеты в Смоленске", fly_count: 40, object_count:15},
-                {id: 6, name: "Полеты в Смоленске", fly_count: 40, object_count:15},
-                {id: 7, name: "Побережье", fly_count: 2, object_count:10},
-                {id: 8, name: "Побережье", fly_count: 2, object_count:10},
-                {id: 9, name: "Побережье", fly_count: 2, object_count:10},
-                {id: 10, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
-                {id: 11, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
-                {id: 12, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
-            ]
+            loading: false,
+
+            projects:
+            {
+                target_project_id: null,
+                all_projects: [
+                    {id: 1, name: "Побережье", fly_count: 2, object_count:10},
+                    {id: 2, name: "Сочи", fly_count: 1, object_count:2},
+                    {id: 3, name: "Полеты в Смоленске", fly_count: 40, object_count:15},
+                    {id: 4, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
+                    {id: 5, name: "Полеты в Смоленске", fly_count: 40, object_count:15},
+                    {id: 6, name: "Полеты в Смоленске", fly_count: 40, object_count:15},
+                    {id: 7, name: "Побережье", fly_count: 2, object_count:10},
+                    {id: 8, name: "Побережье", fly_count: 2, object_count:10},
+                    {id: 9, name: "Побережье", fly_count: 2, object_count:10},
+                    {id: 10, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
+                    {id: 11, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
+                    {id: 12, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
+                ]
+            }
         }
     },
 
     computed:{
         searcherProjects(){
-            return this.projects.filter(project=>project.name.toLowerCase().includes(this.searchQuery.toLowerCase()))
+            return this.projects.all_projects.filter(project=>project.name.toLowerCase().includes(this.searchQuery.toLowerCase()))
+        }
+    },
+    methods:{
+        updateTargetProject(id){
+            this.projects.target_project_id = id
+            this.loadProjectData()
+        },
+        loadProjectData(){
+            this.loading = true
+            setTimeout(()=>this.loading=false, 1000)
         }
     }
 }

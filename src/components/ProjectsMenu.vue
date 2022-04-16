@@ -15,6 +15,7 @@
                 v-for="project in projects"
                 :key="project.id"
                 :project="project"
+                @click="projectClick(project.id)"
             />
         </div>
         <div class="text-white text-center fs-4 nothing-style" v-else>
@@ -49,6 +50,9 @@ export default {
     methods: {
         changeSearchValue: function(event){
             this.$emit('update:modelValue', event.target.value)
+        },
+        projectClick(target_id){
+            this.$emit('targetUpdate', target_id)
         }
     }
 }
