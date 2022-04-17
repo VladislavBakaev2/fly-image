@@ -40,6 +40,7 @@
         @targetUpdate="updateTargetProject"
         v-model="searchQuery"
     />
+    <fly-object-menu/>
     <loading
         v-model="loading"
     />
@@ -50,6 +51,7 @@ import YandexMapComponent from '@/components/YandexMapComponent.vue'
 import ToggleButton from '@/components/ToggleButton.vue'
 import ProjectsMenu from '@/components/ProjectsMenu.vue'
 import Loading from '@/components/Loading.vue'
+import FlyObjectMenu from '@/components/FlyObjectMenu.vue'
 
 export default {
     components:{
@@ -57,6 +59,7 @@ export default {
         ToggleButton,
         ProjectsMenu,
         Loading,
+        FlyObjectMenu,
     },
     data(){
         return {

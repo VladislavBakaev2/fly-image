@@ -24,6 +24,7 @@ export default {
 <style scoped>
 .blur-class{
     backdrop-filter: blur(4px);
+    z-index: 1080;
 }
 .text-shadow{
     text-shadow: rgb(238, 238, 238) 1px 0 30px;
