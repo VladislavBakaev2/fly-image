@@ -31,8 +31,15 @@
                 />
         </div>
     </div>
+    <div class="mouse-coord-info d-flex flex-row text-light justify-content-between align-items-center">
+        <div>lat: {{mouseCoord[0]}}</div>
+        <div>lon: {{mouseCoord[1]}}</div>
+        <div>h: {{mouseCoord[2]}}</div>
+    </div>
     <div class="all-window-height w-100">
-        <yandex-map-component/>
+        <yandex-map-component
+            v-model:mouseCoord="mouseCoord"
+        />
     </div>
     <projects-menu
         :canvas_props="sideMenuProps"
@@ -110,6 +117,7 @@ export default {
                 {id:7, name: "Полет 7", count: 16, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
                 {id:8, name: "Полет 8", count: 17, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
             ],
+            mouseCoord: [0,0,0]
         }
     },
 
@@ -141,6 +149,19 @@ export default {
     border-bottom: 1px solid white;
     position: fixed;
     z-index: 1;
+}
+.mouse-coord-info{
+    position: fixed;
+    width: 250px;
+    height: 30px;
+    background-color: rgba(76, 74, 74, 0.781);
+    right: 0;
+    top:50px;
+    z-index: 3;
+    border-end-start-radius: 5px;
+    border-bottom: 1px solid lightgray;
+    border-left: 1px solid lightgray;
+    padding: 0 5px 0 5px;
 }
 .account-login-logout{
     width: 100px;
