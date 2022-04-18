@@ -19,8 +19,30 @@
                 />
         </div>
         <transition name="fadeHeight">
-            <div v-if="open" class="content-style">
-                <slot></slot>
+            <div v-if="open" class="content-style d-flex justify-content-between">
+                <div class="align-self-center rounded-circle button-style-swipe"
+                    @click="clickLeft"
+                >
+                    <BootstrapIcon
+                        v-show="activeButton.left"
+                        icon="chevron-compact-left"
+                        size="3x"
+                        variant="light"
+                        class="m-1"
+                        />
+                </div>
+                <div class="justify-self-center d-flex"><slot></slot></div>
+                <div class="align-self-center rounded-circle button-style-swipe"
+                    @click="clickRight"
+                >                    
+                    <BootstrapIcon
+                        v-show="activeButton.right"
+                        icon="chevron-compact-right"
+                        size="3x"
+                        variant="light"
+                        class="m-1"
+                        />
+                </div>
             </div>
         </transition>
     </div>
@@ -32,11 +54,20 @@ export default {
         open: {
             type: Boolean,
             default: true
+        },
+        activeButton: {
+            type: Object
         }
     },
     methods:{
         changeState(){
             this.$emit('update:open', !this.open)
+        },
+        clickLeft(){
+            this.$emit('clickLeft')
+        },
+        clickRight(){
+            this.$emit('clickRight')
         }
     }
 }
@@ -69,5 +100,13 @@ export default {
 }
 .blur-class{
     backdrop-filter: blur(1px);
+}
+.button-style-swipe{
+    margin-left: 0.2rem;
+    margin-right: 0.2rem;
+}
+.button-style-swipe:hover{
+    cursor: pointer;
+    background: #525252;
 }
 </style>
