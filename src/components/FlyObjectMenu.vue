@@ -6,11 +6,13 @@
             @clickLeft="objectClickLeft"
             @clickRight="objectClickRight"
         >
-            <object-component
-                v-for="object in visible_objects"
-                :key="object.id"
-                :object="object"
-            />
+            <transition-group name="component-list">
+                <object-component
+                    v-for="object in visible_objects"
+                    :key="object.id"
+                    :object="object"
+                />
+            </transition-group>
         </map-element-component>
         <map-element-component
             v-model:open="fly_menu.open"
@@ -18,11 +20,13 @@
             @clickLeft="flyClickLeft"
             @clickRight="flyClickRight"
         >
-            <fly-component
-                v-for="fly in visible_flying"
-                :key="fly.id"
-                :fly="fly"
-            />
+            <transition-group name="component-list">
+                <fly-component
+                    v-for="fly in visible_flying"
+                    :key="fly.id"
+                    :fly="fly"
+                />
+            </transition-group>
         </map-element-component>
     </div>
 </template>
@@ -117,6 +121,19 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
+.component-list-move,
+.component-list-enter-active,
+.component-list-leave-active {
+  transition: all 1.0s ease;
+}
 
+.component-list-enter-from,
+.component-list-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
+.component-list-leave-active {
+  position: absolute;
+}
 </style>
