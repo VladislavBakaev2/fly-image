@@ -40,7 +40,11 @@
         @targetUpdate="updateTargetProject"
         v-model="searchQuery"
     />
-    <fly-object-menu/>
+    <fly-object-menu
+        :objects="objects"
+        :flying="flying"
+        v-if="viewFlyObjectMenu"
+    />
     <loading
         v-model="loading"
     />
@@ -69,7 +73,6 @@ export default {
             },
             searchQuery: '',
             loading: false,
-
             projects:
             {
                 target_project_id: null,
@@ -87,13 +90,35 @@ export default {
                     {id: 11, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
                     {id: 12, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
                 ]
-            }
+            },
+            objects:[
+                {id:1, name:'Объект 1', count: 2, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
+                {id:2, name:'Объект 2', count: 3, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
+                {id:3, name:'Объект 3', count: 4, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
+                {id:4, name:'Объект 4', count: 5, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
+                {id:5, name:'Объект 5', count: 6, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
+                {id:6, name:'Объект 6', count: 7, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
+                {id:7, name:'Объект 7', count: 8, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
+            ],
+            flying:[
+                {id:1, name: "Полет 1", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
+                {id:2, name: "Полет 2", count: 11, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
+                {id:3, name: "Полет 3", count: 12, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
+                {id:4, name: "Полет 4", count: 13, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
+                {id:5, name: "Полет 5", count: 14, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
+                {id:6, name: "Полет 6", count: 15, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
+                {id:7, name: "Полет 7", count: 16, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
+                {id:8, name: "Полет 8", count: 17, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
+            ],
         }
     },
 
     computed:{
         searcherProjects(){
             return this.projects.all_projects.filter(project=>project.name.toLowerCase().includes(this.searchQuery.toLowerCase()))
+        },
+        viewFlyObjectMenu(){
+            return this.objects.length != 0 && this.flying.length !=0
         }
     },
     methods:{

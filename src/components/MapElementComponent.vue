@@ -84,7 +84,7 @@ export default {
     border-top: 1px solid rgb(255, 255, 255);
 }
 .content-style{
-    height: 150px;
+    height: 180px;
 }
 
 .fadeHeight-enter-active,
