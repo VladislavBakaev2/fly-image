@@ -3,9 +3,9 @@
         <div class="align-self-center">{{fly.name}}</div>
         <div class="d-flex flex-column fly-content-style m-2">
             <div class="d-flex justify-content-between">
-                <img height="70" width="90" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr5E4o_wHB9RJuxBZjX8mjr4HFqGo7CHEqvA&usqp=CAU"/>
-                <img height="70" width="90" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr5E4o_wHB9RJuxBZjX8mjr4HFqGo7CHEqvA&usqp=CAU"/>
-                <img height="70" width="90" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSr5E4o_wHB9RJuxBZjX8mjr4HFqGo7CHEqvA&usqp=CAU"/>
+                <img height="70" width="90" :src="fly.photos[0].src"/>
+                <img height="70" width="90" :src="fly.photos[1].src"/>
+                <img height="70" width="90" :src="fly.photos[2].src"/>
             </div>
             <div class="d-flex flex-row justify-content-center">
                 <ul class="list-style">

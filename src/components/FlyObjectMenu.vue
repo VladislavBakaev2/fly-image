@@ -53,14 +53,14 @@ export default {
     data(){
         return{
             fly_menu:{
-                open: true,
+                open: false,
                 swipe_fly_parameters:{
                     max_element: 4,
                     first_element: 0
                 }
             },
             object_menu:{
-                open: true,
+                open: false,
                 swipe_objects_parameters:{
                     max_element: 4,
                     first_element: 0

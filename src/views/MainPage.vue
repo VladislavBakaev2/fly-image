@@ -34,11 +34,14 @@
     <div class="mouse-coord-info d-flex flex-row text-light justify-content-between align-items-center">
         <div>lat: {{mouseCoord[0]}}</div>
         <div>lon: {{mouseCoord[1]}}</div>
-        <div>h: {{mouseCoord[2]}}</div>
+        <div>alt: {{mouseCoord[2]}}</div>
     </div>
     <div class="all-window-height w-100">
         <yandex-map-component
             v-model:mouseCoord="mouseCoord"
+            :flying="flying"
+            :objects="objects"
+            @deployFly="deployFly"
         />
     </div>
     <projects-menu
@@ -108,14 +111,22 @@ export default {
                 {id:7, name:'Объект 7', count: 8, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
             ],
             flying:[
-                {id:1, name: "Полет 1", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
-                {id:2, name: "Полет 2", count: 11, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
-                {id:3, name: "Полет 3", count: 12, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
-                {id:4, name: "Полет 4", count: 13, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
-                {id:5, name: "Полет 5", count: 14, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
-                {id:6, name: "Полет 6", count: 15, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
-                {id:7, name: "Полет 7", count: 16, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
-                {id:8, name: "Полет 8", count: 17, at_fly: "10-01-2021", at_load: '11-02-2021', photos:[]},
+                {id:1, name: "Полет 1", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
+                    {id:1, name:'photo1', coords:[55.737722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
+                    {id:2, name:'photo2', coords:[55.727722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
+                    {id:3, name:'photo3', coords:[55.757722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
+                ]},
+                {id:2, name: "Полет 2", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
+                    {id:3, name:'photo3', coords:[55.757722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
+                    {id:1, name:'photo1', coords:[55.737722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
+                    {id:2, name:'photo2', coords:[55.727722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
+                    
+                ]},
+                {id:3, name: "Полет 3", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
+                    {id:2, name:'photo2', coords:[55.727722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
+                    {id:1, name:'photo1', coords:[55.737722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
+                    {id:3, name:'photo3', coords:[55.757722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
+                ]}
             ],
             mouseCoord: [0,0,0]
         }
@@ -137,6 +148,10 @@ export default {
         loadProjectData(){
             this.loading = true
             setTimeout(()=>this.loading=false, 1000)
+        },
+        deployFly(id){
+            let fly = this.flying.find(fly => fly.id === id);
+            fly.deployed = true
         }
     }
 }
