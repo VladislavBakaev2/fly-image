@@ -58,6 +58,9 @@
     <loading
         v-model="loading"
     />
+    <fly-image-component
+        v-model:show="flyImageShow"
+    />
 </template>
 
 <script>
@@ -66,6 +69,7 @@ import ToggleButton from '@/components/ToggleButton.vue'
 import ProjectsMenu from '@/components/ProjectsMenu.vue'
 import Loading from '@/components/Loading.vue'
 import FlyObjectMenu from '@/components/FlyObjectMenu.vue'
+import FlyImageComponent from '../components/FlyImageComponent.vue'
 
 export default {
     components:{
@@ -74,6 +78,7 @@ export default {
         ProjectsMenu,
         Loading,
         FlyObjectMenu,
+        FlyImageComponent,
     },
     data(){
         return {
@@ -83,6 +88,7 @@ export default {
             },
             searchQuery: '',
             loading: false,
+            flyImageShow: true,
             projects:
             {
                 target_project_id: null,
