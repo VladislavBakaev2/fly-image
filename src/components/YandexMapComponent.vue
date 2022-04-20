@@ -19,19 +19,26 @@
             :coords="fly.photos[0].coords"
             :icon="{content: `${fly.name}`}"
             :clusterName="'flying'"
-            @click="flyClick(fly)"
+            @click="flyOpen(fly)"
         />
-        <!-- <ymap-marker
-            v-for="(point, index) in fly"
-            :key="point.id"
-            :marker-id="point.id"
-            :coords="point.coords"
-            :icon="{content:`${point.name}`}"
-            :balloon-template="balloonTemplate(point.photo, index)"
-            @balloonopen="balloonOpen(index)"
-            @ballonclose="ballonClose(index)"
+        <div v-for="fly in deployedFlying"
+            :key="fly.id"
         >
-        </ymap-marker> -->
+            <ymap-marker
+                v-for="point in fly.photos"
+                :clusterName="'photos'"
+                :key="fly.id+':'+point.id"
+                :id="'point'+fly.id+':'+point.id"
+                :marker-id="'point'+fly.id+':'+point.id"
+                :coords="point.coords"
+                :icon="{content:`${point.name}`, color:'red'}"
+                :balloon-template="balloonTemplate(point, fly,'point'+fly.id+':'+point.id)"
+                @balloonopen="balloonOpen('point'+fly.id+':'+point.id)"
+                @ballonclose="ballonClose('point'+fly.id+':'+point.id)"
+                @contextmenu="closeFly(fly)"
+            />
+        </div>
+
     </yandex-map> 
 </template>
 
@@ -92,6 +99,13 @@ export default {
                     clusterHideIconOnBalloonOpen: false,
                     gridSize: 200,
                     geoObjectHideIconOnBalloonOpen: false,
+                },
+                photos:{
+                    groupByCoordinates: false,
+                    clusterHideIconOnBalloonOpen: false,
+                    gridSize: 10,
+                    geoObjectHideIconOnBalloonOpen: false,
+                    preset: 'islands#redClusterIcons'
                 }
             },
         }
@@ -118,9 +132,12 @@ export default {
                 }
             })
         },
-        balloonTemplate(src, index){
+        balloonTemplate(point, fly,index){
             return `
-                <img id="${index}" height="100" src="${src}">
+                <h5>${point.name}</h5>
+                <p>lat:${point.coords[0]} lon:${point.coords[1]}</p>
+                <img style='cursor: pointer;' id="${index}" height="100" src="${point.src}">
+                <div>Дата полета: ${fly.at_fly}</div>
             `
         },
         balloonOpen(index){
@@ -132,13 +149,19 @@ export default {
         clickImage(){
             console.log('image')
         },
-        flyClick(fly){
-            this.$emit('deployFly', fly.id)
+        flyOpen(fly){
+            this.$emit('deployFlyChange', {id: fly.id, deployed: true})
+        },
+        closeFly(fly){
+            this.$emit('deployFlyChange', {id: fly.id, deployed: false})
         }
     },
     computed:{
         nonDeployedFlying(){
-            return this.flying.filter(project=>!project.deployed)
+            return this.flying.filter(fly=>!fly.deployed)
+        },
+        deployedFlying(){
+            return this.flying.filter(fly=>fly.deployed)
         }
     },
     watch:{
@@ -149,6 +172,8 @@ export default {
 }
 </script>
 
-<style>
-
+<style scoped>
+.class{
+    cursor: pointer;
+}
 </style>

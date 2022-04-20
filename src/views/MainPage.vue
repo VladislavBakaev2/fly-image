@@ -41,7 +41,7 @@
             v-model:mouseCoord="mouseCoord"
             :flying="flying"
             :objects="objects"
-            @deployFly="deployFly"
+            @deployFlyChange="deployFlyChange"
         />
     </div>
     <projects-menu
@@ -113,19 +113,19 @@ export default {
             flying:[
                 {id:1, name: "Полет 1", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
                     {id:1, name:'photo1', coords:[55.737722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
-                    {id:2, name:'photo2', coords:[55.727722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
-                    {id:3, name:'photo3', coords:[55.757722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
+                    {id:2, name:'photo2', coords:[55.736722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
+                    {id:3, name:'photo3', coords:[55.735722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
                 ]},
                 {id:2, name: "Полет 2", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
                     {id:3, name:'photo3', coords:[55.757722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
-                    {id:1, name:'photo1', coords:[55.737722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
-                    {id:2, name:'photo2', coords:[55.727722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
+                    {id:1, name:'photo1', coords:[55.753722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
+                    {id:2, name:'photo2', coords:[55.751722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
                     
                 ]},
                 {id:3, name: "Полет 3", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
-                    {id:2, name:'photo2', coords:[55.727722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
-                    {id:1, name:'photo1', coords:[55.737722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
-                    {id:3, name:'photo3', coords:[55.757722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
+                    {id:2, name:'photo2', coords:[55.723722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
+                    {id:1, name:'photo1', coords:[55.724722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
+                    {id:3, name:'photo3', coords:[55.725722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
                 ]}
             ],
             mouseCoord: [0,0,0]
@@ -149,9 +149,9 @@ export default {
             this.loading = true
             setTimeout(()=>this.loading=false, 1000)
         },
-        deployFly(id){
-            let fly = this.flying.find(fly => fly.id === id);
-            fly.deployed = true
+        deployFlyChange(cmd){
+            let fly = this.flying.find(fly => fly.id === cmd.id);
+            fly.deployed = cmd.deployed
         }
     }
 }
