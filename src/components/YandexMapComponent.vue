@@ -33,8 +33,8 @@
                 :coords="point.coords"
                 :icon="{content:`${point.name}`, color:'red'}"
                 :balloon-template="balloonTemplate(point, fly,'point'+fly.id+':'+point.id)"
-                @balloonopen="balloonOpen('point'+fly.id+':'+point.id)"
-                @ballonclose="ballonClose('point'+fly.id+':'+point.id)"
+                @balloonopen="balloonOpen('point'+fly.id+':'+point.id, point.id, fly.id)"
+                @ballonclose="ballonClose('point'+fly.id+':'+point.id, point.id, fly.id)"
                 @contextmenu="closeFly(fly)"
             />
         </div>
@@ -108,6 +108,10 @@ export default {
                     preset: 'islands#redClusterIcons'
                 }
             },
+            active_photo:{
+                fly_id: null,
+                photo_id: null
+            }
         }
     },
     methods:{
@@ -140,14 +144,16 @@ export default {
                 <div>Дата полета: ${fly.at_fly}</div>
             `
         },
-        balloonOpen(index){
+        balloonOpen(index, point_id, fly_id){
             document.getElementById(index).addEventListener('click', this.clickImage);
+            this.active_photo.fly_id = fly_id
+            this.active_photo.photo_id = point_id
         },
         ballonClose(index){
             document.getElementById(index).removeEventListener('click', this.clickImage);  
         },
         clickImage(){
-            console.log('image')
+            this.$emit('clickImage', this.active_photo)
         },
         flyOpen(fly){
             this.$emit('deployFlyChange', {id: fly.id, deployed: true})

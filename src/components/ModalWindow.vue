@@ -1,6 +1,6 @@
 <template>
   <div class="modal-window-style" v-if="show" @click="hideDialog">
-      <div class='modal-content' :style="cssProps" @click.stop>
+      <div class='modal-content' :style="modalStyle" @click.stop>
           <slot></slot>
       </div>
   </div>
@@ -13,18 +13,13 @@ export default {
             type: Boolean,
             default: false
         },
-        width:{
-            type: Number
+        modalStyle:{
+            type: Object
         }
     },
     methods: {
         hideDialog() {
             // this.$emit('update:show', false)
-        }
-    },
-    computed:{
-        cssProps(){
-            return {'--width': this.width+"%"}
         }
     }
 }
@@ -40,15 +35,17 @@ export default {
     position: fixed;
     display: flex;
     backdrop-filter: blur(1px);
+    z-index: 2000;
 }
 .modal-content{
     margin: auto;
-    background: rgb(255, 255, 255);
     border-radius: 4px;
-    width: var(--width);
     padding: 20px;
     display: flex;
     flex-direction: column;
-    border: 1px solid rgb(148, 148, 148);
+    border: 1px solid rgb(255, 255, 255);
+    background: -webkit-linear-gradient(0deg, rgb(43, 43, 43) 27%, rgb(95, 95, 95));
+    background: -moz-linear-gradient(0deg, rgb(43, 43, 43) 27%, rgb(95, 95, 95));
+    background: linear-gradient(0deg, rgb(43, 43, 43) 27%, rgb(95, 95, 95));
 }
 </style>
