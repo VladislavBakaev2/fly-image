@@ -110,13 +110,20 @@ export default {
                 ]
             },
             objects:[
-                {id:1, name:'Объект 1', count: 2, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
-                {id:2, name:'Объект 2', count: 3, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
-                {id:3, name:'Объект 3', count: 4, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
-                {id:4, name:'Объект 4', count: 5, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
-                {id:5, name:'Объект 5', count: 6, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
-                {id:6, name:'Объект 6', count: 7, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
-                {id:7, name:'Объект 7', count: 8, at_first: '10-08-2022', at_last:"10-08-2022", chronology_ids:[1,2,3]},
+                {id:1, name:'Объект 1', at_first: '10-08-2022', at_last:"10-08-2022", commentary: 'aurhvlierhvil uehrvwiuervbweirbuv arhferwhf fiweuhfiwuef woieuhfwoiuhfw owierufhw ierfu wrfiuhw eriofuhw erfih werhf owieruhfwoie', coords: [55.787722, 37.732367],objects:[
+                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', box: []},
+                    {id: 2, ref_photo: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg', commentary: 'объект2', box: []},
+                    {id: 3, ref_photo: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg', commentary: 'объект3', box: []},
+                ]},
+                {id:2, name:'Объект 2', at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.717722, 37.732367],objects:[
+                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', box: []},
+                ]},
+                {id:3, name:'Объект 3', at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.752367],objects:[
+                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', box: []},
+                ]},
+                {id:4, name:'Объект 4', at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.762367],objects:[
+                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', box: []},
+                ]},
             ],
             flying:[
                 {id:1, name: "Полет 1", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[

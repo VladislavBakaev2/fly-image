@@ -32,13 +32,23 @@
                 :marker-id="'point'+fly.id+':'+point.id"
                 :coords="point.coords"
                 :icon="{content:`${point.name}`, color:'red'}"
-                :balloon-template="balloonTemplate(point, fly,'point'+fly.id+':'+point.id)"
-                @balloonopen="balloonOpen('point'+fly.id+':'+point.id, point.id, fly.id)"
-                @ballonclose="ballonClose('point'+fly.id+':'+point.id, point.id, fly.id)"
+                :balloon-template="balloonTemplateFly(point, fly,'point'+fly.id+':'+point.id)"
+                @balloonopen="balloonOpenFly('point'+fly.id+':'+point.id, point.id, fly.id)"
+                @ballonclose="ballonCloseFly('point'+fly.id+':'+point.id, point.id, fly.id)"
                 @contextmenu="closeFly(fly)"
             />
         </div>
-
+        <ymap-marker
+            v-for="object in objects"
+            :marker-id="object.name+''+object.id"
+            :key="object.id"
+            :coords="object.coords"
+            :icon="{content: `${object.name}`, color: 'yellow'}"
+            clusterName="objects"
+            :balloon-template="balloonTemplateObject(object, 'object:'+object.id)"
+            @balloonopen="balloonOpenObject(object.id, 'object:'+object.id)"
+            @ballonclose="ballonCloseObject('object:'+object.id)"
+        />
     </yandex-map> 
 </template>
 
@@ -103,14 +113,24 @@ export default {
                 photos:{
                     groupByCoordinates: false,
                     clusterHideIconOnBalloonOpen: false,
-                    gridSize: 10,
+                    gridSize: 200,
                     geoObjectHideIconOnBalloonOpen: false,
                     preset: 'islands#redClusterIcons'
+                },
+                objects:{
+                    groupByCoordinates: false,
+                    clusterHideIconOnBalloonOpen: false,
+                    gridSize: 200,
+                    geoObjectHideIconOnBalloonOpen: false,
+                    preset: 'islands#yellowClusterIcons'  
                 }
             },
             active_photo:{
                 fly_id: null,
                 photo_id: null
+            },
+            active_object:{
+                id: null
             }
         }
     },
@@ -136,7 +156,7 @@ export default {
                 }
             })
         },
-        balloonTemplate(point, fly,index){
+        balloonTemplateFly(point, fly,index){
             return `
                 <h5>${point.name}</h5>
                 <p>lat:${point.coords[0]} lon:${point.coords[1]}</p>
@@ -144,15 +164,15 @@ export default {
                 <div>Дата полета: ${fly.at_fly}</div>
             `
         },
-        balloonOpen(index, point_id, fly_id){
-            document.getElementById(index).addEventListener('click', this.clickImage);
+        balloonOpenFly(index, point_id, fly_id){
+            document.getElementById(index).addEventListener('click', this.clickImageFly);
             this.active_photo.fly_id = fly_id
             this.active_photo.photo_id = point_id
         },
-        ballonClose(index){
-            document.getElementById(index).removeEventListener('click', this.clickImage);  
+        ballonCloseFly(index){
+            document.getElementById(index).removeEventListener('click', this.clickImageFly);  
         },
-        clickImage(){
+        clickImageFly(){
             this.$emit('clickImage', this.active_photo)
         },
         flyOpen(fly){
@@ -160,7 +180,27 @@ export default {
         },
         closeFly(fly){
             this.$emit('deployFlyChange', {id: fly.id, deployed: false})
-        }
+        },
+
+        balloonTemplateObject(object, id){
+            return `
+                <h5>${object.name}</h5>
+                <p>lat:${object.coords[0]} lon:${object.coords[1]}</p>
+                <img style='cursor: pointer;' id="${id}" height="100" src="${object.objects[object.objects.length-1].ref_photo}">
+                <div>Дата создания: ${object.at_first}</div>
+                <div>Количество записей: ${object.objects.length}</div>
+            `
+        },
+        balloonOpenObject(object_id, index){
+            document.getElementById(index).addEventListener('click', this.clickImageObject);
+            this.active_object.id = object_id
+        },
+        ballonCloseObject(index){
+            document.getElementById(index).removeEventListener('click', this.clickImageObject);  
+        },
+        clickImageObject(){
+            this.$emit('clickObject', this.active_object)
+        },
     },
     computed:{
         nonDeployedFlying(){
