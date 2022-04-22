@@ -43,6 +43,7 @@
             :objects="objects"
             @deployFlyChange="deployFlyChange"
             @clickImage="clickImage"
+            @clickObject="clickObject"
         />
     </div>
     <projects-menu
@@ -173,6 +174,9 @@ export default {
             let target_photo = target_fly.photos.find(photo=>photo.id==cmd.photo_id)
             target_photo.active = true
             this.flyImageShow = true
+        },
+        clickObject(cmd){
+            console.log(cmd)
         }
     },
     watch:{

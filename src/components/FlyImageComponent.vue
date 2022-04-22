@@ -6,14 +6,14 @@
     >
 
         <drag-zoom-component
-            :img="activePhoto.src"
+            :img="activePhoto.photo.src"
         >
         <div class="d-flex flex-row justify-content-between text-light m-2">
             <div class="w-50">
-                <div class="d-flex flex-row justify-content-between"><div>Название полета</div><div>{{activeFly.name}}</div></div>
-                <div class="d-flex flex-row justify-content-between"><div>Дата полета</div><div>{{activeFly.at_fly}}</div></div>
-                <div class="d-flex flex-row justify-content-between"><div>Название фото</div><div>{{activePhoto.name}}</div></div>
-                <div class="d-flex flex-row justify-content-between"><div>Координаты фото</div><div>{{activePhoto.coords}}</div></div>
+                <div class="d-flex flex-row justify-content-between"><div>Название полета</div><div>{{activePhoto.fly.name}}</div></div>
+                <div class="d-flex flex-row justify-content-between"><div>Дата полета</div><div>{{activePhoto.fly.at_fly}}</div></div>
+                <div class="d-flex flex-row justify-content-between"><div>Название фото</div><div>{{activePhoto.photo.name}}</div></div>
+                <div class="d-flex flex-row justify-content-between"><div>Координаты фото</div><div>{{activePhoto.photo.coords}}</div></div>
             </div>
             <div class="d-flex align-items-center" style="cursor: pointer;"
                 @click="dialogHidden"
@@ -61,21 +61,14 @@ export default {
             for(let i=0; i< this.flying.length; i++){
                 for(let j=0; j<this.flying[i].photos.length; j++){
                     if(this.flying[i].photos[j].active){
-                        return this.flying[i].photos[j]
+                        return {
+                            photo: this.flying[i].photos[j],
+                            fly: this.flying[i]
+                        }
                     }
                 }
             }
             return undefined
-        },
-        activeFly(){
-            for(let i=0; i< this.flying.length; i++){
-                for(let j=0; j<this.flying[i].photos.length; j++){
-                    if(this.flying[i].photos[j].active){
-                        return this.flying[i]
-                    }
-                }
-            }
-            return undefined   
         }
     }
 }

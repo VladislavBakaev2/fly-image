@@ -8,7 +8,8 @@
         <div 
             :style="{transform: `translate(${convertToPx[0]},${convertToPx[1]}) scale(${scale})`}"
         >
-            <img :src="img">
+            <!-- <img :src="img"> -->
+            <canvas id="canvas"></canvas>
         </div>
     </div>
     <slot></slot>
@@ -58,6 +59,17 @@ export default {
             return [this.translate[0]+this.div_translate[0]+'px',
                     this.translate[1]+this.div_translate[1]+'px']
         }
+    },
+    mounted(){
+        var img = new Image();
+        var myCanvas = document.getElementById('canvas');
+        var ctx = myCanvas.getContext('2d');
+        img.onload = function(){
+            myCanvas.width = img.width
+            myCanvas.height = img.height
+            ctx.drawImage(img,0,0); // Or at whatever offset you like
+        };
+        img.src = this.img;
     }
 }
 </script>
