@@ -64,6 +64,10 @@
         v-model:show="flyImageShow"
         :flying="flying"
     />
+    <object-image-component
+        v-model:show="objectImageShow"
+        :object="activeObject"
+    />
 </template>
 
 <script>
@@ -73,6 +77,7 @@ import ProjectsMenu from '@/components/ProjectsMenu.vue'
 import Loading from '@/components/Loading.vue'
 import FlyObjectMenu from '@/components/FlyObjectMenu.vue'
 import FlyImageComponent from '../components/FlyImageComponent.vue'
+import ObjectImageComponent from '../components/ObjectImageComponent.vue'
 
 export default {
     components:{
@@ -82,6 +87,7 @@ export default {
         Loading,
         FlyObjectMenu,
         FlyImageComponent,
+        ObjectImageComponent,
     },
     data(){
         return {
@@ -92,6 +98,7 @@ export default {
             searchQuery: '',
             loading: false,
             flyImageShow: false,
+            objectImageShow: false,
             projects:
             {
                 target_project_id: null,
@@ -111,19 +118,19 @@ export default {
                 ]
             },
             objects:[
-                {id:1, name:'Объект 1', at_first: '10-08-2022', at_last:"10-08-2022", commentary: 'aurhvlierhvil uehrvwiuervbweirbuv arhferwhf fiweuhfiwuef woieuhfwoiuhfw owierufhw ierfu wrfiuhw eriofuhw erfih werhf owieruhfwoie', coords: [55.787722, 37.732367],objects:[
-                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', box: []},
-                    {id: 2, ref_photo: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg', commentary: 'объект2', box: []},
-                    {id: 3, ref_photo: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg', commentary: 'объект3', box: []},
+                {id:1, name:'Объект 1', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: 'owieruhfwoie', coords: [55.787722, 37.732367],objects:[
+                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70}, at_create: '10-08-2022'},
+                    {id: 2, ref_photo: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg', commentary: 'объект2', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
+                    {id: 3, ref_photo: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg', commentary: 'объект3', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
                 ]},
-                {id:2, name:'Объект 2', at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.717722, 37.732367],objects:[
-                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', box: []},
+                {id:2, name:'Объект 2', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.717722, 37.732367],objects:[
+                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
                 ]},
-                {id:3, name:'Объект 3', at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.752367],objects:[
-                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', box: []},
+                {id:3, name:'Объект 3', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.752367],objects:[
+                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
                 ]},
-                {id:4, name:'Объект 4', at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.762367],objects:[
-                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', box: []},
+                {id:4, name:'Объект 4', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.762367],objects:[
+                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
                 ]},
             ],
             flying:[
@@ -154,6 +161,9 @@ export default {
         },
         viewFlyObjectMenu(){
             return this.objects.length != 0 && this.flying.length !=0
+        },
+        activeObject(){
+            return this.objects.find(object=>object.active)
         }
     },
     methods:{
@@ -176,7 +186,9 @@ export default {
             this.flyImageShow = true
         },
         clickObject(cmd){
-            console.log(cmd)
+            let target_object = this.objects.find(object=>object.id==cmd.id)
+            target_object.active = true
+            this.objectImageShow = true
         }
     },
     watch:{
@@ -186,6 +198,13 @@ export default {
                     fly.photos.forEach(photo => {
                         photo.active=false
                     })
+                });
+            }
+        },
+        objectImageShow(new_v){
+            if(!new_v){
+                this.objects.forEach(object => {
+                    object.active = false
                 });
             }
         }

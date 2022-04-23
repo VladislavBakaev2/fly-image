@@ -1,15 +1,19 @@
 <template>
     <div class="content-style"
-        @mousedown="mouseDown"
-        @mouseup="mouseUp"
-        @mousemove="mouseMove"
-        @mousewheel="mouseWheel"    
+        @mousedown="mouseDownDrag"
+        @mouseup="mouseUpDrag"
+        @mousemove="mouseMoveDrag"
+        @mousewheel="mouseWheelDrag"  
     >
         <div 
-            :style="{transform: `translate(${convertToPx[0]},${convertToPx[1]}) scale(${scale})`}"
+            :style="{transform: `translate(${convertToPx[0]},${convertToPx[1]}) scale(${drag_params.scale})`}"
         >
             <!-- <img :src="img"> -->
-            <canvas id="canvas"></canvas>
+            <canvas id="canvas"
+                @mousedown="mouseDownDraw" 
+                @mouseup="mouseUpDraw" 
+                @mousemove="mouseMoveDraw"            
+            ></canvas>
         </div>
     </div>
     <slot></slot>
@@ -20,56 +24,146 @@ export default {
     props:{
         img:{
             type: String
+        },
+        start_rect:{
+            type: Object
         }
     },
     data(){
-        return {
-            isDrag: false,
-            translate: [0,0],
-            div_translate: [0,0],
-            startPoint: null,
-            scale: 1
+        return {  
+            drag_params: {
+                isDrag: false,
+                translate: [0,0],
+                div_translate: [0,0],
+                startPoint: null,
+                scale: 1.0
+            },
+            draw_params: {
+                current: {
+                    x: 0,
+                    y: 0
+                },
+                previous: {
+                    x: 0,
+                    y: 0
+                },
+                rect:{
+                    startX:0,
+                    startY:0,
+                    w:0,
+                    h:0
+                },
+                down: false
+            },
+            mode: 'drag',
+            canvas_img: null
         }
     },
     methods:{
-        mouseDown(e){
-            event.preventDefault()
-            this.startPoint = {x:e.layerX, y:e.layerY}
-            this.isDrag=true
-        },
-        mouseUp(){
-            this.startPoint=null
-            this.translate[0] +=this.div_translate[0]
-            this.translate[1] +=this.div_translate[1]
-            this.div_translate = [0,0]
-            this.isDrag=false
-        },
-        mouseMove(e){
-            if(this.isDrag){
-                this.div_translate[0] = (e.layerX - this.startPoint.x)
-                this.div_translate[1] = (e.layerY - this.startPoint.y)
+        mouseDownDrag(e){
+            if(this.mode=="drag"){
+                event.preventDefault()
+                this.drag_params.startPoint = {x:e.layerX, y:e.layerY}
+                this.drag_params.isDrag=true
             }
         },
-        mouseWheel(e){
-            this.scale +=e.wheelDeltaY/1000
+        mouseUpDrag(){
+            if(this.mode=="drag"){
+                this.drag_params.startPoint=null
+                this.drag_params.translate[0] +=this.drag_params.div_translate[0]
+                this.drag_params.translate[1] +=this.drag_params.div_translate[1]
+                this.drag_params.div_translate = [0,0]
+                this.drag_params.isDrag=false
+            }
+        },
+        mouseMoveDrag(e){
+            if(this.drag_params.isDrag){
+                this.drag_params.div_translate[0] = (e.layerX - this.drag_params.startPoint.x)
+                this.drag_params.div_translate[1] = (e.layerY - this.drag_params.startPoint.y)
+            }
+        },
+        mouseWheelDrag(e){
+            this.drag_params.scale +=e.wheelDeltaY/1000
+        },
+
+
+
+        drawRecrangle: function () {
+            var c = document.getElementById("canvas");
+            var ctx = c.getContext("2d");
+            ctx.drawImage(this.canvas_img,0,0);
+            ctx.lineWidth = 3
+            ctx.setLineDash([0]);
+            ctx.strokeStyle = "red"
+            ctx.strokeRect(this.draw_params.rect.startX, this.draw_params.rect.startY, this.draw_params.rect.w, this.draw_params.rect.h);
+        },
+        mouseDownDraw: function (event) {
+            if(this.mode=="draw"){
+                this.draw_params.down = true;
+                this.draw_params.current = {
+                    x: event.offsetX,
+                    y: event.offsetY
+                }
+                this.draw_params.rect.startX = this.draw_params.current.x;
+                this.draw_params.rect.startY = this.draw_params.current.y;
+            }
+        },
+        mouseUpDraw: function () {
+            if(this.mode=="draw"){
+                this.draw_params.down = false;
+            }
+        },
+        mouseMoveDraw: function (event) {
+            if(this.mode=='draw'){
+                this.draw_params.current = {
+                    x: event.offsetX,
+                    y: event.offsetY
+                }
+                if (this.draw_params.down) {
+                    this.draw_params.rect.w = this.draw_params.current.x - this.draw_params.rect.startX;
+                    this.draw_params.rect.h = this.draw_params.current.y - this.draw_params.rect.startY ;
+                    this.drawRecrangle()
+                }
+            }
+        },
+
+        updateCanvas(){
+            var img = new Image();
+            var myCanvas = document.getElementById('canvas');
+            var ctx = myCanvas.getContext('2d');
+            img.onload = ()=>{
+                myCanvas.width = img.width
+                myCanvas.height = img.height
+                ctx.drawImage(img,0,0); // Or at whatever offset you like
+                if(this.start_rect){
+                    this.draw_params.rect = {
+                        startX: this.start_rect.startX,
+                        startY: this.start_rect.startY,
+                        w: this.start_rect.w,
+                        h: this.start_rect.h
+                    }
+                    this.drawRecrangle()
+                }
+            };
+            img.src = this.img;
+            this.canvas_img=img
         }
     },
     computed:{
         convertToPx(){
-            return [this.translate[0]+this.div_translate[0]+'px',
-                    this.translate[1]+this.div_translate[1]+'px']
-        }
+            return [this.drag_params.translate[0]+this.drag_params.div_translate[0]+'px',
+                    this.drag_params.translate[1]+this.drag_params.div_translate[1]+'px']
+        },
     },
     mounted(){
-        var img = new Image();
-        var myCanvas = document.getElementById('canvas');
-        var ctx = myCanvas.getContext('2d');
-        img.onload = function(){
-            myCanvas.width = img.width
-            myCanvas.height = img.height
-            ctx.drawImage(img,0,0); // Or at whatever offset you like
-        };
-        img.src = this.img;
+        this.updateCanvas()
+    },
+    watch:{
+        img(){
+            this.updateCanvas()
+            this.drag_params.translate = [0,0]
+            this.drag_params.scale = 1.0
+        }
     }
 }
 </script>
