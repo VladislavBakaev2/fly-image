@@ -24,7 +24,7 @@ export default {
 
 <style scoped>
 .offcanvas-style{
-    width: 300px;
+    width: 350px;
     background: #3f3f3fca;
     border-right: 1px solid white;
     overflow-y: scroll;

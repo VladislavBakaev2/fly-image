@@ -103,18 +103,7 @@ export default {
             {
                 target_project_id: null,
                 all_projects: [
-                    {id: 1, name: "Побережье", fly_count: 2, object_count:10},
-                    {id: 2, name: "Сочи", fly_count: 1, object_count:2},
-                    {id: 3, name: "Полеты в Смоленске", fly_count: 40, object_count:15},
-                    {id: 4, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
-                    {id: 5, name: "Полеты в Смоленске", fly_count: 40, object_count:15},
-                    {id: 6, name: "Полеты в Смоленске", fly_count: 40, object_count:15},
-                    {id: 7, name: "Побережье", fly_count: 2, object_count:10},
-                    {id: 8, name: "Побережье", fly_count: 2, object_count:10},
-                    {id: 9, name: "Побережье", fly_count: 2, object_count:10},
-                    {id: 10, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
-                    {id: 11, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
-                    {id: 12, name: "Полеты в ИПУ", fly_count: 10, object_count:30},
+                    // {id: 1, name: "Побережье", fly_count: 2, object_count:10},
                 ]
             },
             objects:[
@@ -160,7 +149,7 @@ export default {
             return this.projects.all_projects.filter(project=>project.name.toLowerCase().includes(this.searchQuery.toLowerCase()))
         },
         viewFlyObjectMenu(){
-            return this.objects.length != 0 && this.flying.length !=0
+            return this.objects.length != 0 && this.flying.length !=0 && this.projects.target_project_id
         },
         activeObject(){
             return this.objects.find(object=>object.active)
@@ -189,6 +178,29 @@ export default {
             let target_object = this.objects.find(object=>object.id==cmd.id)
             target_object.active = true
             this.objectImageShow = true
+        },
+        async fetchProjects(){
+            this.$http.get('api/project/get')
+                .then((response)=>{
+                    if(response.statusText=='OK'){
+                        this.projects.all_projects = []
+                        this.projects.target_project_id = null
+                        response.data.forEach((project)=>{
+                            let new_project = {}
+                            new_project.id = project.id
+                            new_project.author = project.author
+                            new_project.fly_count = project.fly_count
+                            new_project.object_count = project.object_count
+                            new_project.name = project.name
+                            new_project.at_create = project.at_create.split('T')[0]
+                            new_project.at_update = project.at_update.split('T')[0]
+                            this.projects.all_projects.push(new_project)
+                        })
+                    }
+                })
+                .catch(()=>{
+                    alert('Нет соединения с сервером')
+                })
         }
     },
     watch:{
@@ -208,6 +220,9 @@ export default {
                 });
             }
         }
+    },
+    mounted(){
+        this.fetchProjects()
     }
 }
 </script>
