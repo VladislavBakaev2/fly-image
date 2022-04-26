@@ -6,9 +6,8 @@
         @mousewheel="mouseWheelDrag"  
     >
         <div 
-            :style="{transform: `translate(${convertToPx[0]},${convertToPx[1]}) scale(${drag_params.scale})`}"
+            :style="{transform: `translate(${convertToPx[0]},${convertToPx[1]}) scale(${Math.exp(drag_params.wheel)})`}"
         >
-            <!-- <img :src="img"> -->
             <canvas id="canvas"
                 @mousedown="mouseDownDraw" 
                 @mouseup="mouseUpDraw" 
@@ -36,7 +35,7 @@ export default {
                 translate: [0,0],
                 div_translate: [0,0],
                 startPoint: null,
-                scale: 1.0
+                wheel: 0.0
             },
             draw_params: {
                 current: {
@@ -61,6 +60,7 @@ export default {
     },
     methods:{
         mouseDownDrag(e){
+            this.drag_params.scaleTransformOrigin = ['0px', '0px']
             if(this.mode=="drag"){
                 event.preventDefault()
                 this.drag_params.startPoint = {x:e.layerX, y:e.layerY}
@@ -83,7 +83,7 @@ export default {
             }
         },
         mouseWheelDrag(e){
-            this.drag_params.scale +=e.wheelDeltaY/1000
+            this.drag_params.wheel +=e.wheelDeltaY/1000
         },
 
 
@@ -162,7 +162,7 @@ export default {
         img(){
             this.updateCanvas()
             this.drag_params.translate = [0,0]
-            this.drag_params.scale = 1.0
+            this.drag_params.wheel = 0.0
         }
     }
 }

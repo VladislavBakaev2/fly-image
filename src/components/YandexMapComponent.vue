@@ -2,7 +2,6 @@
     <yandex-map
         :key="key"
         :settings="map_settings.settings"
-        v-model:coords="map_parameters.center"
         style="width: 100%; height:100%"
         :controls="map_settings.controls"
         :detailedControls="map_settings.detailedControls"
@@ -10,7 +9,9 @@
         @mousemove="moveMouse"
         map-type="hybrid"
         :cluster-options="clusterOptions"
-        v-model:zoom="map_parameters.zoom"
+        :zoom="zoom"
+        :coords="center"
+        @boundschange="changeZoom($event), changeCenterMap($event)"
     >
         <ymap-marker
             v-for="fly in nonDeployedFlying"
@@ -67,6 +68,12 @@ export default {
         },
         objects:{
             type:Array
+        },
+        zoom:{
+            type:Number
+        },
+        center:{
+            type:Array
         }
     },
     data() {
@@ -97,10 +104,6 @@ export default {
                     'typechange',
                     'mousemove'
                 ],
-            },
-            map_parameters:{
-                center: [55.737722, 37.732367],
-                zoom: 10,
             },
             countMouseMsg: 0,
             clusterOptions: {
@@ -200,6 +203,13 @@ export default {
         },
         clickImageObject(){
             this.$emit('clickObject', this.active_object)
+        },
+
+        changeZoom(event){
+            this.$emit('update:zoom', event.originalEvent.newZoom)
+        },
+        changeCenterMap(event){
+            this.$emit('update:center', event.originalEvent.newCenter)
         },
     },
     computed:{

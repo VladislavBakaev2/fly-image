@@ -39,6 +39,8 @@
     <div class="all-window-height w-100">
         <yandex-map-component
             v-model:mouseCoord="mouseCoord"
+            v-model:zoom="map_parameters.zoom"
+            v-model:center="map_parameters.center"
             :flying="flying"
             :objects="objects"
             @deployFlyChange="deployFlyChange"
@@ -96,9 +98,14 @@ export default {
                 header_height: '50px'
             },
             searchQuery: '',
-            loading: false,
+            loadingFly: false,
+            loadingObject: false,
             flyImageShow: false,
             objectImageShow: false,
+            map_parameters:{
+                center: [55.737722, 37.732367],
+                zoom: 6,
+            },
             projects:
             {
                 target_project_id: null,
@@ -107,38 +114,38 @@ export default {
                 ]
             },
             objects:[
-                {id:1, name:'Объект 1', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: 'owieruhfwoie', coords: [55.787722, 37.732367],objects:[
-                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70}, at_create: '10-08-2022'},
-                    {id: 2, ref_photo: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg', commentary: 'объект2', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
-                    {id: 3, ref_photo: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg', commentary: 'объект3', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
-                ]},
-                {id:2, name:'Объект 2', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.717722, 37.732367],objects:[
-                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
-                ]},
-                {id:3, name:'Объект 3', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.752367],objects:[
-                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
-                ]},
-                {id:4, name:'Объект 4', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.762367],objects:[
-                    {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
-                ]},
+                // {id:1, name:'Объект 1', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: 'owieruhfwoie', coords: [55.787722, 37.732367],objects:[
+                //     {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70}, at_create: '10-08-2022'},
+                //     {id: 2, ref_photo: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg', commentary: 'объект2', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
+                //     {id: 3, ref_photo: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg', commentary: 'объект3', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
+                // ]},
+                // {id:2, name:'Объект 2', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.717722, 37.732367],objects:[
+                //     {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
+                // ]},
+                // {id:3, name:'Объект 3', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.752367],objects:[
+                //     {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
+                // ]},
+                // {id:4, name:'Объект 4', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.762367],objects:[
+                //     {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
+                // ]},
             ],
             flying:[
-                {id:1, name: "Полет 1", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
-                    {id:1, name:'photo1', active:false, coords:[55.737722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
-                    {id:2, name:'photo2', active:false, coords:[55.736722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
-                    {id:3, name:'photo3', active:false, coords:[55.735722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
-                ]},
-                {id:2, name: "Полет 2", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
-                    {id:3, name:'photo3', active:false, coords:[55.757722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
-                    {id:1, name:'photo1', active:false, coords:[55.753722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
-                    {id:2, name:'photo2', active:false, coords:[55.751722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
+                // {id:1, name: "Полет 1", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
+                //     {id:1, name:'photo1', active:false, coords:[55.737722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
+                //     {id:2, name:'photo2', active:false, coords:[55.736722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
+                //     {id:3, name:'photo3', active:false, coords:[55.735722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
+                // ]},
+                // {id:2, name: "Полет 2", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
+                //     {id:3, name:'photo3', active:false, coords:[55.757722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
+                //     {id:1, name:'photo1', active:false, coords:[55.753722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
+                //     {id:2, name:'photo2', active:false, coords:[55.751722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
                     
-                ]},
-                {id:3, name: "Полет 3", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
-                    {id:2, name:'photo2', active:false, coords:[55.723722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
-                    {id:1, name:'photo1', active:false, coords:[55.724722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
-                    {id:3, name:'photo3', active:false, coords:[55.725722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
-                ]}
+                // ]},
+                // {id:3, name: "Полет 3", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
+                //     {id:2, name:'photo2', active:false, coords:[55.723722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
+                //     {id:1, name:'photo1', active:false, coords:[55.724722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
+                //     {id:3, name:'photo3', active:false, coords:[55.725722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
+                // ]}
             ],
             mouseCoord: [0,0,0]
         }
@@ -149,20 +156,20 @@ export default {
             return this.projects.all_projects.filter(project=>project.name.toLowerCase().includes(this.searchQuery.toLowerCase()))
         },
         viewFlyObjectMenu(){
-            return this.objects.length != 0 && this.flying.length !=0 && this.projects.target_project_id
+            return this.projects.target_project_id
         },
         activeObject(){
             return this.objects.find(object=>object.active)
+        },
+        loading(){
+            return this.loadingFly || this.loadingObject
         }
     },
     methods:{
         updateTargetProject(id){
             this.projects.target_project_id = id
-            this.loadProjectData()
-        },
-        loadProjectData(){
-            this.loading = true
-            setTimeout(()=>this.loading=false, 1000)
+            this.fetchFlying(id)
+            this.fetchObjects(id)
         },
         deployFlyChange(cmd){
             let fly = this.flying.find(fly => fly.id === cmd.id);
@@ -179,7 +186,7 @@ export default {
             target_object.active = true
             this.objectImageShow = true
         },
-        async fetchProjects(){
+        fetchProjects(){
             this.$http.get('api/project/get')
                 .then((response)=>{
                     if(response.statusText=='OK'){
@@ -198,9 +205,154 @@ export default {
                         })
                     }
                 })
-                .catch(()=>{
-                    alert('Нет соединения с сервером')
+                .catch((error)=>{
+                    if(error.name=="Error"){
+                        alert('Нет соединения с сервером (загрузка проектов)')
+                    }
+                    else{
+                        alert('Ошибка обработки ответа (загрузка проектов)')
+                    }
                 })
+        },
+        fetchFlying(project_id){
+            this.loadingFly = true
+            this.$http.get('api/fly/get', {params: {'project_id': project_id } })
+                .then((response)=>{
+                    if(response.statusText=='OK'){
+                        this.flying = []
+                        response.data.forEach((fly)=>{
+                            let new_fly = {}
+                            new_fly.id = fly.id
+                            new_fly.author = fly.author
+                            new_fly.name = fly.name
+                            new_fly.robot_type = fly.robot_type
+                            new_fly.camera_type = fly.camera_type
+                            new_fly.at_create = fly.at_create.split('T')[0]
+                            new_fly.at_fly = fly.at_fly
+                            new_fly.commentary = fly.commentary
+                            new_fly.deployed = false
+                            new_fly.photos = []
+                            fly.photos.forEach((photo)=>{
+                                let new_photo = {}
+                                new_photo.id = photo.id
+                                new_photo.name = photo.name
+                                new_photo.active = false
+                                new_photo.coords = photo.coordinate
+                                new_photo.src=process.env.VUE_APP_ROOT_API+'/media/'+photo.image
+                                new_fly.photos.push(new_photo)
+                            })
+                            this.flying.push(new_fly)
+                        })
+                    }
+                })
+                .catch((error)=>{
+                    if(error.name=="Error"){
+                        alert('Нет соединения с сервером (загрузка полетов)')
+                    }
+                    else{
+                        alert('Ошибка обработки ответа (загрузка полетов)')
+                    }
+                })
+                .finally(()=>{
+                    this.loadingFly = false
+                })
+        },
+        fetchObjects(project_id){
+            this.loadingObject = true
+            this.$http.get('api/object/get', {params: {'project_id': project_id } })
+                .then((response)=>{
+                    if(response.statusText=='OK'){
+                        this.objects=[]
+                        response.data.forEach((object)=>{
+                            let new_object = {}
+                            new_object.id = object.id
+                            new_object.name = object.name
+                            new_object.active = false
+                            new_object.at_first = object.at_create.split('T')[0]
+                            new_object.at_last = object.at_update.split('T')[0]
+                            new_object.commentary = object.commentary
+                            new_object.coords = object.coordinate
+                            new_object.objects = []
+                            object.objects.forEach((rec_obj)=>{
+                                let new_rec_obj = {}
+                                new_rec_obj.id = rec_obj.id
+                                new_rec_obj.author = rec_obj.author
+                                new_rec_obj.at_create = rec_obj.at_create.split('T')[0]
+                                new_rec_obj.ref_photo = process.env.VUE_APP_ROOT_API+'/media/'+rec_obj.image
+                                new_rec_obj.commentary = rec_obj.commentary
+                                new_rec_obj.rect = rec_obj.image_box
+                                new_object.objects.push(new_rec_obj)
+                            })
+                            this.objects.push(new_object)
+                        })
+                    }
+                })
+                .catch((error)=>{
+                    if(error.name=="Error"){
+                        alert('Нет соединения с сервером (загрузка объектов)')
+                    }
+                    else{
+                        console.error(error)
+                        alert('Ошибка обработки ответа (загрузка объектов)')
+                    }
+                })
+                .finally(()=>{
+                    this.loadingObject = false
+                })
+        },
+        centeringMap(){
+            let max_min_lat = [0,0]
+            let max_min_lon = [0,0]
+            if (this.objects.lenght!=0){
+                max_min_lat[0] = this.objects[0].coords[0]
+                max_min_lat[1] = this.objects[0].coords[0]
+
+                max_min_lon[0] = this.objects[0].coords[1]
+                max_min_lon[1] = this.objects[0].coords[1]
+            }
+            else if(this.flying.lenght!=0){
+                max_min_lat[0] = this.flying[0].photos[0].coords[0]
+                max_min_lat[1] = this.flying[0].photos[0].coords[0]
+
+                max_min_lon[0] = this.flying[0].photos[0].coords[1]
+                max_min_lon[1] = this.flying[0].photos[0].coords[1]                
+            }
+            else{
+                return
+            }
+            this.objects.forEach((object)=>{
+                if (object.coords[0]>max_min_lat[0]){
+                    max_min_lat[0]=object.coords[0]
+                }
+                else if(object.coords[0]<max_min_lat[1]){
+                    max_min_lat[1] = object.coords[0]
+                }
+                
+                if (object.coords[1]>max_min_lon[0]){
+                    max_min_lon[0] = object.coords[1]
+                }
+                else if(object.coords[1]<max_min_lon[1]){
+                    max_min_lon[1] = object.coords[1]
+                }
+            })
+            this.flying.forEach((fly)=>{
+                fly.photos.forEach((photo)=>{
+                    if (photo.coords[0]>max_min_lat[0]){
+                        max_min_lat[0]=photo.coords[0]
+                    }
+                    else if(photo.coords[0]<max_min_lat[1]){
+                        max_min_lat[1] = photo.coords[0]
+                    }
+                    
+                    if (photo.coords[1]>max_min_lon[0]){
+                        max_min_lon[0] = photo.coords[1]
+                    }
+                    else if(photo.coords[1]<max_min_lon[1]){
+                        max_min_lon[1] = photo.coords[1]
+                    }
+                })
+            })
+            this.map_parameters.center = [(max_min_lat[0]+max_min_lat[1])/2, (max_min_lon[0]+max_min_lon[1])/2]
         }
     },
     watch:{
@@ -218,6 +370,11 @@ export default {
                 this.objects.forEach(object => {
                     object.active = false
                 });
+            }
+        },
+        loading(new_v){
+            if(!new_v){
+                this.centeringMap()
             }
         }
     },

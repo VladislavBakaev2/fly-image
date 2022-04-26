@@ -14,15 +14,20 @@
                     <div class="m-3" >{{target_object_id+1}}/{{object.objects.length}}</div>
                     <div><button type="button" class="btn btn-outline-secondary" @click="target_object_id++" :disabled="target_object_id==object.objects.length-1">+</button></div>
                 </div>
-                <div class="d-flex flex-row justify-content-between">
-                    <div class="w-50">
-                        <div class="d-flex flex-row justify-content-between"><div>Название объекта</div><div>{{object.name}}</div></div>
-                        <div class="d-flex flex-row justify-content-between"><div>Дата создания объекта</div><div>{{object.at_first}}</div></div>
-                        <div class="d-flex flex-row justify-content-between"><div>Дата последней записи</div><div>{{object.at_last}}</div></div>
-                        <div class="d-flex flex-row justify-content-between"><div>Комментарий</div><div>{{object.commentary}}</div></div>
-                        <div class="d-flex flex-row justify-content-between"><div>Координаты</div><div>{{object.coords}}</div></div>
-                        <div class="d-flex flex-row justify-content-between"><div>Дата создания записи</div><div>{{object.objects[target_object_id].at_create}}</div></div>
-                        <div class="d-flex flex-row justify-content-between"><div>Дополнительный комментарий</div><div>{{object.objects[target_object_id].commentary}}</div></div>
+                <div class="d-flex flex-row">
+                    <div class="d-flex flex-row justify-content-between w-100">
+                        <div class="w-50 m-3">
+                            <div class="d-flex flex-row justify-content-between"><div>Название объекта</div><div>{{object.name}}</div></div>
+                            <div class="d-flex flex-row justify-content-between"><div>Дата создания объекта</div><div>{{object.at_first}}</div></div>
+                            <div class="d-flex flex-row justify-content-between"><div>Дата последней записи</div><div>{{object.at_last}}</div></div>
+                            <div class="d-flex flex-row justify-content-between"><div>Координаты</div><div>{{object.coords}}</div></div>
+                            <div class="d-flex flex-row justify-content-between"><div>Комментарий</div><div class="commentary-style">{{object.commentary}}</div></div>
+                        </div>
+                        <div class="w-50 m-3">
+                            <div class="d-flex flex-row justify-content-between"><div>Автор записи</div><div>{{object.objects[target_object_id].author}}</div></div>
+                            <div class="d-flex flex-row justify-content-between"><div>Дата создания текущей записи</div><div>{{object.objects[target_object_id].at_create}}</div></div>
+                            <div class="d-flex flex-row justify-content-between"><div>Комментарий к текущей записи</div><div class="commentary-style">{{object.objects[target_object_id].commentary}}</div></div>
+                        </div>
                     </div>
                     <div class="d-flex align-items-center" style="cursor: pointer;"
                         @click="dialogHidden"
@@ -78,6 +83,14 @@ export default {
 }
 </script>
 
-<style>
-
+<style scope>
+.commentary-style{
+    width: 300px;
+    height: 50px;
+    overflow-y: scroll;
+    border: 1px solid gray;
+    border-radius: 5px;
+    margin-left: 30px;
+    padding: 5px;
+}
 </style>
