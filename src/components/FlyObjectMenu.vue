@@ -55,14 +55,14 @@ export default {
             fly_menu:{
                 open: false,
                 swipe_fly_parameters:{
-                    max_element: 4,
+                    max_element: 3,
                     first_element: 0
                 }
             },
             object_menu:{
                 open: false,
                 swipe_objects_parameters:{
-                    max_element: 4,
+                    max_element: 3,
                     first_element: 0
                 }
             },

@@ -8,7 +8,7 @@
         <drag-zoom-component
             :img="activePhoto.photo.src"
         >
-        <div class="d-flex flex-row text-light m-2">
+        <div class="data-style d-flex flex-row text-light">
             <div class="d-flex flex-row justify-content-between w-100">
                 <div class="w-50 m-3">
                     <div class="d-flex flex-row justify-content-between"><div>Название полета</div><div>{{activePhoto.fly.name}}</div></div>
@@ -91,5 +91,13 @@ export default {
     border-radius: 5px;
     margin-left: 30px;
     padding: 5px;
+}
+.data-style{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: -webkit-linear-gradient(0deg, rgb(43, 43, 43, 0.8) 27%, rgba(95, 95, 95, 0.8));
+    background: -moz-linear-gradient(0deg, rgb(43, 43, 43, 0.8) 27%, rgb(95, 95, 95, 0.8));
+    background: linear-gradient(0deg, rgb(43, 43, 43, 0.8) 27%, rgb(95, 95, 95, 0.8));
 }
 </style>

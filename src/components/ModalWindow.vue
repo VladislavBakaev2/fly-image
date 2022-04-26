@@ -40,7 +40,6 @@ export default {
 .modal-content{
     margin: auto;
     border-radius: 4px;
-    padding: 20px;
     display: flex;
     flex-direction: column;
     border: 1px solid rgb(255, 255, 255);
