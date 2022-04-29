@@ -1,11 +1,11 @@
 <template>
-    <div class="flex-column text-white project-div-style ">
+    <div class="d-flex flex-column text-white project-div-style ">
         <div class="fs-5">{{project.name}}</div>
-        <div class="row-style flex-row"><div>Количество полетов:</div><div>{{project.fly_count}}</div></div>
-        <div class="row-style flex-row"><div>Количество объектов:</div><div>{{project.object_count}}</div></div>
-        <div class="row-style flex-row"><div>Автор:</div><div>{{project.author}}</div></div>
-        <div class="row-style flex-row"><div>Дата создания:</div><div>{{project.at_create}}</div></div>
-        <div class="row-style flex-row"><div>Дата обновления:</div><div>{{project.at_update}}</div></div>
+        <div class="row-style d-flex flex-row"><div>Количество полетов:</div><div>{{project.fly_count}}</div></div>
+        <div class="row-style d-flex flex-row"><div>Количество объектов:</div><div>{{project.object_count}}</div></div>
+        <div class="row-style d-flex flex-row"><div>Автор:</div><div>{{project.author}}</div></div>
+        <div class="row-style d-flex flex-row"><div>Дата создания:</div><div>{{project.at_create}}</div></div>
+        <div class="row-style d-flex flex-row"><div>Дата обновления:</div><div>{{project.at_update}}</div></div>
     </div>
 </template>
 

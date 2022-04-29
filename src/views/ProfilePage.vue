@@ -8,7 +8,7 @@
                     style="font-size: 13rem;"
                     />
                 <div class="text-dark fs-2 mb-2">
-                    <strong>Имя Фамилия</strong>
+                    <strong>{{STATE.user.first_name + ' ' + STATE.user.last_name}}</strong>
                 </div>
                 <div class="d-flex justify-content-between w-100 mb-3 fs-4">
                     <div class="d-flex align-items-center">
@@ -18,9 +18,11 @@
                         variant="dark"
                         class="margin-right"
                         />
-                        <div>email</div>
+                        <div>{{STATE.user.email}}</div>
                     </div>
-                    <div class="d-flex align-items-center">
+                    <div class="d-flex align-items-center"
+                        v-if="STATE.user.telegramm!=''"
+                    >
                         <div><BootstrapIcon
                                 icon="send"
                                 size="2x"
@@ -36,7 +38,7 @@
                             Загружено полетов
                         </div>
                         <div>
-                            1
+                            {{STATE.user.fly_count}}
                         </div>
                     </div>
                     <div class="w-100 d-flex justify-content-between">
@@ -44,21 +46,37 @@
                             Найдено объектов
                         </div>
                         <div>
-                            20
+                            {{STATE.user.object_count}}
                         </div>
                     </div>
                 </div>
 
-                <button class="btn btn-outline-dark btn-md px-5 mb-3" type="submit">Выйти из акккаунта</button>
-                <div class=" px-2 rounded mt-4 date "> <span class="join">Регистрация Май, 2021</span> </div>
+                <button class="btn btn-outline-dark btn-md px-5 mb-3" @click="logout">Выйти из акккаунта</button>
+                <div class=" px-2 rounded mt-4 date "> <span class="join">Регистрация {{registerData}}</span> </div>
             </div>
         </div>
     </div>
 </template>
 
 <script>
-export default {
+import { mapActions, mapGetters } from 'vuex'
 
+export default {
+    methods:{
+        logout(){
+            this.logout()
+        },
+        ...mapActions('account',['logout'])
+    },
+    computed:{
+        ...mapGetters('account',['STATE']),
+        ...mapGetters('alert',['STATE_ALERT']),
+        registerData(){
+            const date = new Date(this.STATE.user.at_create)
+            const month = date.toLocaleString('default', { month: 'long' });
+            return month+', '+date.getFullYear()
+        }
+    }
 }
 </script>
 

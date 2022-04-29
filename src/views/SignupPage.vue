@@ -56,6 +56,7 @@
 
 <script>
 import { Form, Field, ErrorMessage } from "vee-validate";
+import { mapState, mapActions } from 'vuex'
 import * as yup from "yup";
 
 export default {
@@ -89,12 +90,17 @@ export default {
             schema
         }
     },
-     methods:{
+    computed:{
+        ...mapState({
+            user: state => state.user
+        })
+    },
+    methods:{
         handleSignIn(){
-            
-        }
-     }
-
+            this.login()
+        },
+        ...mapActions('account',['login'])
+    }
 }
 </script>
 

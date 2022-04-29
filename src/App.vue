@@ -15,14 +15,6 @@
   margin: 0;
   padding: 0;
 }
-.flex-row{
-  display: flex;
-  flex-direction: row;
-}
-.flex-column{
-  display: flex;
-  flex-direction: column;
-}
 .all-window-height{
     height: 100vh;
 }

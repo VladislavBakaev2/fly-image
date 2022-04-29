@@ -1,12 +1,10 @@
 import { createStore } from 'vuex'
+import { account } from './account.module';
+import { alert } from './alert.module';
 
 export default createStore({
-  state: {
-  },
-  mutations: {
-  },
-  actions: {
-  },
   modules: {
+    account,
+    alert
   }
 })

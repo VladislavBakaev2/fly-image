@@ -1,34 +1,41 @@
 <template>
-    <div class="header-style flex-row" :style="{height:sideMenuProps.header_height}">
-        <toggle-button
-            class="toggle-button-style enable-icon"
-            :target_id="'#'+sideMenuProps.target_canvas_id"
-        />
-        <div class="account-info enable-icon"
-            @click="$router.push('profile')"
-        >
-            <span class="account-name text-white">Anonimus</span>
-             <BootstrapIcon
-                icon="person-circle"
-                size="2x"
-                variant="light"
-                />           
-        </div>
-        <div class="account-login-logout flex-row">
-            <BootstrapIcon
-                icon="person-plus-fill"
-                size="2x"
-                variant="light"
-                class="enable-icon"
-                @click="$router.push('signup')"
-                />
-            <BootstrapIcon
-                icon="person-check"
-                size="2x"
-                variant="light"
-                class="enable-icon"
-                @click="$router.push('signin')"
-                />
+    <div class="header-style d-flex flex-row" :style="{height:sideMenuProps.header_height}">
+        <div class="d-flex flex-row justify-content-between w-100">
+            <toggle-button
+                class="toggle-button-style enable-icon"
+                :target_id="'#'+sideMenuProps.target_canvas_id"
+            />
+            <div class="d-flex flex-row">
+                <div class="account-info enable-icon"
+                    @click="$router.push('profile')"
+                    v-if="STATE.status.loggedIn"
+                >
+                    <span class="account-name text-white">{{STATE.user.username}}</span>
+                    <BootstrapIcon
+                        icon="person-circle"
+                        size="2x"
+                        variant="light"
+                        />           
+                </div>
+                <div class="account-login-logout d-flex flex-row">
+                    <BootstrapIcon
+                        icon="person-plus-fill"
+                        size="2x"
+                        variant="light"
+                        class="enable-icon"
+                        @click="$router.push('signup')"
+                        style="margin-right: 15px;"
+                        />
+                    <BootstrapIcon
+                        icon="person-check"
+                        size="2x"
+                        variant="light"
+                        class="enable-icon"
+                        @click="$router.push('signin')"
+                        v-if="STATE.status.logout"
+                        />
+                </div>
+            </div>
         </div>
     </div>
     <div class="mouse-coord-info d-flex flex-row text-light justify-content-between align-items-center">
@@ -81,7 +88,61 @@ import FlyObjectMenu from '@/components/FlyObjectMenu.vue'
 import FlyImageComponent from '../components/FlyImageComponent.vue'
 import ObjectImageComponent from '../components/ObjectImageComponent.vue'
 
+import { ref, getCurrentInstance, computed } from 'vue'
+import { mapGetters } from 'vuex'
+
 export default {
+    setup(){
+        const app = getCurrentInstance()
+        const http = app.appContext.config.globalProperties.$http
+
+        const projects = ref({
+                target_project_id: null,
+                all_projects: [
+                    // {id: 1, name: "Побережье", fly_count: 2, object_count:10},
+                ]
+        })
+        const searchQuery = ref('')
+
+        const fetchProjects = ()=>{
+            http.get('api/project/get')
+                .then((response)=>{
+                    if(response.statusText=='OK'){
+                        projects.value.all_projects = []
+                        projects.value.target_project_id = null
+                        response.data.forEach((project)=>{
+                            let new_project = {}
+                            new_project.id = project.id
+                            new_project.author = project.author
+                            new_project.fly_count = project.fly_count
+                            new_project.object_count = project.object_count
+                            new_project.name = project.name
+                            new_project.at_create = project.at_create.split('T')[0]
+                            new_project.at_update = project.at_update.split('T')[0]
+                            projects.value.all_projects.push(new_project)
+                        })
+                    }
+                })
+                .catch((error)=>{
+                    if(error.name=="Error"){
+                        alert('Нет соединения с сервером (загрузка проектов)')
+                    }
+                    else{
+                        alert('Ошибка обработки ответа (загрузка проектов)')
+                    }
+                })
+        }
+        const searcherProjects =computed(()=>{
+            return projects.value.all_projects.filter(project=>project.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
+        })
+
+        return {
+            projects,
+            fetchProjects,
+            searcherProjects,
+            searchQuery
+        }
+    },
     components:{
         YandexMapComponent,
         ToggleButton,
@@ -97,7 +158,6 @@ export default {
                 target_canvas_id: "sideMenu",
                 header_height: '50px'
             },
-            searchQuery: '',
             loadingFly: false,
             loadingObject: false,
             flyImageShow: false,
@@ -105,13 +165,6 @@ export default {
             map_parameters:{
                 center: [55.737722, 37.732367],
                 zoom: 6,
-            },
-            projects:
-            {
-                target_project_id: null,
-                all_projects: [
-                    // {id: 1, name: "Побережье", fly_count: 2, object_count:10},
-                ]
             },
             objects:[
                 // {id:1, name:'Объект 1', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: 'owieruhfwoie', coords: [55.787722, 37.732367],objects:[
@@ -152,9 +205,6 @@ export default {
     },
 
     computed:{
-        searcherProjects(){
-            return this.projects.all_projects.filter(project=>project.name.toLowerCase().includes(this.searchQuery.toLowerCase()))
-        },
         viewFlyObjectMenu(){
             return this.projects.target_project_id
         },
@@ -163,7 +213,8 @@ export default {
         },
         loading(){
             return this.loadingFly || this.loadingObject
-        }
+        },
+        ...mapGetters('account',['STATE']),
     },
     methods:{
         updateTargetProject(id){
@@ -185,34 +236,6 @@ export default {
             let target_object = this.objects.find(object=>object.id==cmd.id)
             target_object.active = true
             this.objectImageShow = true
-        },
-        fetchProjects(){
-            this.$http.get('api/project/get')
-                .then((response)=>{
-                    if(response.statusText=='OK'){
-                        this.projects.all_projects = []
-                        this.projects.target_project_id = null
-                        response.data.forEach((project)=>{
-                            let new_project = {}
-                            new_project.id = project.id
-                            new_project.author = project.author
-                            new_project.fly_count = project.fly_count
-                            new_project.object_count = project.object_count
-                            new_project.name = project.name
-                            new_project.at_create = project.at_create.split('T')[0]
-                            new_project.at_update = project.at_update.split('T')[0]
-                            this.projects.all_projects.push(new_project)
-                        })
-                    }
-                })
-                .catch((error)=>{
-                    if(error.name=="Error"){
-                        alert('Нет соединения с сервером (загрузка проектов)')
-                    }
-                    else{
-                        alert('Ошибка обработки ответа (загрузка проектов)')
-                    }
-                })
         },
         fetchFlying(project_id){
             this.loadingFly = true
@@ -414,7 +437,6 @@ export default {
 .account-info{
     align-self: center;
     padding: 0 10px;
-    margin-left: auto;
     margin-right: 10px;
 }
 .account-name{

@@ -17,7 +17,7 @@
                         <p class="text-white-50 mb-5">Введите email и пароль вашего акккаунта</p>
 
                         <div class="form-outline form-white mb-4">
-                            <Field name="email" id="typeEmailX" type="email" class="form-control form-control-lg" />
+                            <Field name="email" id="typeEmailX" type="email" class="form-control form-control-lg"/>
                             <label class="form-label" for="typeEmailX">Email</label><br>
                             <ErrorMessage name="email" class="error-feedback text-danger" />
                         </div>
@@ -28,9 +28,11 @@
                             <ErrorMessage name="password" class="error-feedback text-danger" />
                         </div>
 
-                        <button class="btn btn-outline-light btn-lg px-5" type="submit">Войти</button>
+                        <button class="btn btn-outline-light btn-lg px-5 mb-3" type="submit">Войти</button>
+                        <div v-if="STATE.status.logginError" class="error-feedback text-danger">
+                            Пользователь с указанными email и паролем не найдены
+                        </div>
                     </div>
-
                 </div>
             </div>
         </Form>
@@ -40,6 +42,7 @@
 <script>
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
     components:{
@@ -56,18 +59,23 @@ export default {
         password: yup
             .string()
             .required("Требуется пароль!")
-            .min(8, "Минимум 8 символов!")
-            .max(40, "Максимум 8 символов!"),
+            .min(6, "Минимум 6 символов!")
+            .max(40, "Максимум 40 символов!"),
         });
         return{
             schema
         }
     },
-     methods:{
-        handleSignIn(){
-            
-        }
-     }
+    methods:{
+        handleSignIn(user){
+            this.login(user)
+        },
+        ...mapActions('account',['login'])
+    },
+    computed:{
+        ...mapGetters('account',['STATE']),
+        ...mapGetters('alert',['STATE_ALERT']),
+    },
 
 }
 </script>
