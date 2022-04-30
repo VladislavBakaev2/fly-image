@@ -1,10 +1,39 @@
 import { userService } from '../services';
 import router from '@/router'
 
-const user = JSON.parse(localStorage.getItem('user'));
-const state = user
-    ? { status: { loggedIn: true }, 'user':user.user }
-    : { status: { logout: true }, user: null };
+const state = { status: { logout: true }, user: null }
+
+function updateToken(){
+    const user = JSON.parse(localStorage.getItem('user'));
+    if(!user){
+        state.status = { logout: true }
+        state.user = null
+    }
+    else{
+        if (user.expiration<Date.now()){
+            state.status = { logout: true }
+            state.user = null
+            userService.logout();
+        }
+        else{
+            userService.updateToken(user.token)
+            .then(
+                user => {
+                    state.status = {loggedIn: true}
+                    state.user = user
+                },
+                error => {
+                    console.log(error)
+                }
+            );
+            setTimeout(updateToken, parseInt((user.expiration-user.creation)/2));
+            state.status = { loggedIn: true }
+            state.user = user
+        }
+    }
+}
+
+updateToken()
 
 const getters = {
     STATE: state => {
@@ -20,6 +49,7 @@ const actions = {
                 user => {
                     router.push('/')
                     commit('loginSuccess', user);
+                    updateToken()
                 },
                 error => {
                     commit('loginFailure');
@@ -38,17 +68,19 @@ const actions = {
             .then(
                 user => {
                     commit('registerSuccess', user);
+                    dispatch('alert/success', 'Registration successful', { root: true });
                     setTimeout(() => {
-                        // display success message after route change completes
-                        dispatch('alert/success', 'Registration successful', { root: true });
-                    })
+                        router.push('/')
+                        commit('logout');
+                    },1000)
                 },
                 error => {
+                    console.log(error)
                     commit('registerFailure');
                     dispatch('alert/error', error.response.data.errors, { root: true });
                 }
             );
-    }
+    },
 };
 
 const mutations = {
@@ -73,12 +105,12 @@ const mutations = {
         state.user = null
     },
     registerSuccess(state) {
-        state.status = {logout: true};
+        state.status = {register: true};
         state.user = null
 
     },
     registerFailure(state) {
-        state.status = {logout: true};
+        state.status = {registerError: true};
         state.user = null
     }
 };

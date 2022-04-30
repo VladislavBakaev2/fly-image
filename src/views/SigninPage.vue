@@ -28,8 +28,8 @@
                             <ErrorMessage name="password" class="error-feedback text-danger" />
                         </div>
 
-                        <button class="btn btn-outline-light btn-lg px-5 mb-3" type="submit">Войти</button>
-                        <div v-if="STATE.status.logginError" class="error-feedback text-danger">
+                        <button class="btn btn-outline-light btn-lg px-5 mb-4" type="submit">Войти</button>
+                        <div v-if="STATE.status.logginError" class="error-feedback text-danger m-3">
                             Пользователь с указанными email и паролем не найдены
                         </div>
                     </div>

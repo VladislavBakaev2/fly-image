@@ -49,6 +49,12 @@
                             </div>
                         </div>
                         <button class="btn btn-outline-light btn-lg px-5" type="submit">Зарегистрироваться</button>
+                        <div v-if="STATE.status.registerError" class="error-feedback text-danger">
+                            Пользователь с указанными email уже создан
+                        </div>
+                        <div v-if="STATE.status.register" class="text-light">
+                            Пользователь зарегистрирован
+                        </div>
                     </div>
         </Form>
     </div>
@@ -56,7 +62,7 @@
 
 <script>
 import { Form, Field, ErrorMessage } from "vee-validate";
-import { mapState, mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import * as yup from "yup";
 
 export default {
@@ -74,7 +80,7 @@ export default {
         password: yup
             .string()
             .required("Требуется пароль!")
-            .min(8, "Минимум 8 символов!")
+            .min(6, "Минимум 6 символов!")
             .max(40, "Максимум 8 символов!"),
         passwordConfirmation: yup
         .string()
@@ -91,15 +97,15 @@ export default {
         }
     },
     computed:{
-        ...mapState({
-            user: state => state.user
-        })
+        ...mapGetters('account',['STATE']),
+        ...mapGetters('alert',['STATE_ALERT']),
+
     },
     methods:{
-        handleSignIn(){
-            this.login()
+        handleSignIn(user){
+            this.register(user)
         },
-        ...mapActions('account',['login'])
+        ...mapActions('account',['register'])
     }
 }
 </script>

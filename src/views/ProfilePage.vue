@@ -2,6 +2,14 @@
     <div class="container-fluid bg-dark  py-5 min-vh-100 row d-flex justify-content-center align-items-center m-0">
         <div class="col-10 col-md-6 col-lg-5 col-xl-4 bg-light d-flex justify-content-center rounded">          
             <div class="align-items-center d-flex flex-column mt-5 mb-3 col-8 col-md-9">
+                <div class="house-style enable-icon">
+                    <BootstrapIcon
+                        icon="house"
+                        size="5x"
+                        variant="dark"
+                        @click="$router.push('/')"
+                        />       
+                </div>
                 <BootstrapIcon
                     icon="person-circle"
                     variant="dark"
@@ -10,7 +18,7 @@
                 <div class="text-dark fs-2 mb-2">
                     <strong>{{STATE.user.first_name + ' ' + STATE.user.last_name}}</strong>
                 </div>
-                <div class="d-flex justify-content-between w-100 mb-3 fs-4">
+                <div class="d-flex flex-column w-100 mb-3 fs-4">
                     <div class="d-flex align-items-center">
                         <BootstrapIcon
                         icon="at"
@@ -29,7 +37,7 @@
                                 variant="dark"
                                 class="margin-right"
                                 /></div>
-                        <div>Telegramm</div>
+                        <div>{{STATE.user.telegramm}}</div>
                     </div>
                 </div>
                 <div class="w-100 d-flex flex-column mb-5 text-muted px-3">

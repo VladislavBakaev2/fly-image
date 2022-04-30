@@ -17,7 +17,9 @@
                         variant="light"
                         />           
                 </div>
-                <div class="account-login-logout d-flex flex-row">
+                <div class="account-login-logout d-flex flex-row"
+                    v-if="STATE.status.logout"
+                >
                     <BootstrapIcon
                         icon="person-plus-fill"
                         size="2x"
@@ -32,7 +34,6 @@
                         variant="light"
                         class="enable-icon"
                         @click="$router.push('signin')"
-                        v-if="STATE.status.logout"
                         />
                 </div>
             </div>
