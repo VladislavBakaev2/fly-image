@@ -1,38 +1,44 @@
 import { userService } from '../services';
 import router from '@/router'
+import store from '@/store'
 
-const state = { status: { logout: true }, user: null }
+const state = { status: { logout: true }, token: null, user:null }
 
 function updateToken(){
-    const user = JSON.parse(localStorage.getItem('user'));
-    if(!user){
-        state.status = { logout: true }
-        state.user = null
+    const token = JSON.parse(localStorage.getItem('token'));
+    if(!token){
+        store.commit('account/logout')
     }
     else{
-        if (user.expiration<Date.now()){
-            state.status = { logout: true }
-            state.user = null
+        if (token.expiration<Date.now()){
+            store.commit('account/loginSuccess')
             userService.logout();
         }
         else{
-            userService.updateToken(user.token)
+            userService.updateToken(token.token)
             .then(
-                user => {
-                    state.status = {loggedIn: true}
-                    state.user = user
+                token => {
+                    store.commit('account/loginSuccess', token)
+                    if(!state.user){
+                        userService.getUser(token.token)
+                        .then(
+                            user => {
+                                store.commit('account/updateUser', user)
+                            },
+                            error => {
+                                console.log(error)
+                            }
+                        );
+                    }
+                    setTimeout(updateToken, parseInt((token.expiration-token.creation)/2));
                 },
                 error => {
                     console.log(error)
                 }
             );
-            setTimeout(updateToken, parseInt((user.expiration-user.creation)/2));
-            state.status = { loggedIn: true }
-            state.user = user
         }
     }
 }
-
 updateToken()
 
 const getters = {
@@ -46,9 +52,9 @@ const actions = {
         commit('loginRequest', { email });
         userService.login(email, password)
             .then(
-                user => {
+                token => {
                     router.push('/')
-                    commit('loginSuccess', user);
+                    commit('loginSuccess', token);
                     updateToken()
                 },
                 error => {
@@ -81,37 +87,44 @@ const actions = {
                 }
             );
     },
+    setUser({commit}, user){
+        commit('updateUser', user)
+    }
 };
 
 const mutations = {
-    loginRequest(state, user) {
-        state.status = { loggingIn: true };
-        state.user = user;
+    updateUser(state, user){
+        state.user = user
     },
-    loginSuccess(state, user) {
+    loginRequest(state, token) {
+        state.status = { loggingIn: true };
+        state.token = token;
+    },
+    loginSuccess(state, token) {
         state.status = { loggedIn: true };
-        state.user = user;
+        state.token = token;
     },
     loginFailure(state) {
         state.status = { logginError: true};
-        state.user = null;
+        state.token = null;
     },
     logout(state) {
         state.status = {logout: true};
-        state.user = null;
+        state.token = null;
+        state.user = null
     },
     registerRequest(state) {
         state.status = { registering: true };
-        state.user = null
+        state.token = null
     },
     registerSuccess(state) {
         state.status = {register: true};
-        state.user = null
+        state.token = null
 
     },
     registerFailure(state) {
         state.status = {registerError: true};
-        state.user = null
+        state.token = null
     }
 };
 
@@ -120,5 +133,5 @@ export const account = {
     state,
     actions,
     mutations,
-    getters
+    getters,
 };

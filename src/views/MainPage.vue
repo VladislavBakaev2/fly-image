@@ -10,7 +10,7 @@
                     @click="$router.push('profile')"
                     v-if="STATE.status.loggedIn"
                 >
-                    <span class="account-name text-white">{{STATE.user.username}}</span>
+                    <span v-if="STATE.user" class="account-name text-white">{{STATE.user.username}}</span>
                     <BootstrapIcon
                         icon="person-circle"
                         size="2x"
@@ -168,38 +168,8 @@ export default {
                 zoom: 6,
             },
             objects:[
-                // {id:1, name:'Объект 1', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: 'owieruhfwoie', coords: [55.787722, 37.732367],objects:[
-                //     {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70}, at_create: '10-08-2022'},
-                //     {id: 2, ref_photo: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg', commentary: 'объект2', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
-                //     {id: 3, ref_photo: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg', commentary: 'объект3', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
-                // ]},
-                // {id:2, name:'Объект 2', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.717722, 37.732367],objects:[
-                //     {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
-                // ]},
-                // {id:3, name:'Объект 3', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.752367],objects:[
-                //     {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
-                // ]},
-                // {id:4, name:'Объект 4', active: false, at_first: '10-08-2022', at_last:"10-08-2022", commentary: '', coords: [55.787722, 37.762367],objects:[
-                //     {id: 1, ref_photo: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg', commentary: 'объект1', rect: {startX:100, startY:200, w:40, h:70},at_create: '10-08-2022'},
-                // ]},
             ],
             flying:[
-                // {id:1, name: "Полет 1", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
-                //     {id:1, name:'photo1', active:false, coords:[55.737722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
-                //     {id:2, name:'photo2', active:false, coords:[55.736722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
-                //     {id:3, name:'photo3', active:false, coords:[55.735722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
-                // ]},
-                // {id:2, name: "Полет 2", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
-                //     {id:3, name:'photo3', active:false, coords:[55.757722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
-                //     {id:1, name:'photo1', active:false, coords:[55.753722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
-                //     {id:2, name:'photo2', active:false, coords:[55.751722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
-                    
-                // ]},
-                // {id:3, name: "Полет 3", count: 10, at_fly: "10-01-2021", at_load: '11-02-2021', deployed: false, photos:[
-                //     {id:2, name:'photo2', active:false, coords:[55.723722, 37.732367], src: 'https://www.ixbt.com/img/n1/news/2021/10/2/22459ff25f8eff76bddf34124cc2c85b16f4cd4a_large.jpg'},
-                //     {id:1, name:'photo1', active:false, coords:[55.724722, 37.732367], src: 'https://www.imgonline.com.ua/examples/bee-on-daisy.jpg'},
-                //     {id:3, name:'photo3', active:false, coords:[55.725722, 37.732367], src: 'https://vypechka-online.ru/wp-content/uploads/2019/09/EQgJ4p77Aeo.jpg'},
-                // ]}
             ],
             mouseCoord: [0,0,0]
         }

@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid bg-dark  py-5 min-vh-100 row d-flex justify-content-center align-items-center m-0">
         <div class="col-10 col-md-6 col-lg-5 col-xl-4 bg-light d-flex justify-content-center rounded">          
-            <div class="align-items-center d-flex flex-column mt-5 mb-3 col-8 col-md-9">
+            <div v-if="userIs" class="align-items-center d-flex flex-column mt-5 mb-3 col-8 col-md-9">
                 <div class="house-style enable-icon">
                     <BootstrapIcon
                         icon="house"
