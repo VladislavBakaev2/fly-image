@@ -19,7 +19,7 @@ export default {
     },
     methods: {
         hideDialog() {
-            // this.$emit('update:show', false)
+            this.$emit('update:show', false)
         }
     }
 }
@@ -35,7 +35,7 @@ export default {
     position: fixed;
     display: flex;
     backdrop-filter: blur(1px);
-    z-index: 2000;
+    z-index: 1500;
 }
 .modal-content{
     margin: auto;

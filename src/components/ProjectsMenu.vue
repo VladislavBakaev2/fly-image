@@ -10,6 +10,13 @@
                    class="form-control search-input-style text-white"
                    placeholder="Поиск">
         </div>
+        <button v-if="$store.state.account.status.loggedIn" type="button" class="btn button-style" @click="addEvent">
+            <BootstrapIcon
+                icon="plus-lg"
+                size="2x"
+                variant="light"
+                />
+        </button>
         <div v-if="projects.length !=0">
             <project-view
                 v-for="project in projects"
@@ -53,6 +60,9 @@ export default {
         },
         projectClick(target_id){
             this.$emit('targetUpdate', target_id)
+        },
+        addEvent(){
+            this.$emit('addEvent')
         }
     }
 }
@@ -75,5 +85,13 @@ export default {
 }
 .nothing-style{
     margin-top: 30px ;
+}
+.button-style{
+    border: 1px solid gray;
+    border-radius: 5px;
+    margin: 0 20px;
+}
+.button-style:hover{
+    background: rgba(128, 128, 128, 0.771);
 }
 </style>

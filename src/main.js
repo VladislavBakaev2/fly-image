@@ -15,8 +15,8 @@ const base = axios.create({
   });
 
 const app = createApp(App)
-                .use(router)
                 .use(store)
+                .use(router)
                 .component('BootstrapIcon', BootstrapIcon)
 
 app.config.globalProperties.$http = base

@@ -6,6 +6,7 @@
             size="2x"
             variant="light"
             data-bs-toggle="offcanvas"
+            :id="target_id+'_button'"
             :data-bs-target="target_id"/>
     </div>
 </template>

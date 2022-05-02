@@ -60,6 +60,7 @@
         :canvas_props="sideMenuProps"
         :projects="searcherProjects"
         @targetUpdate="updateTargetProject"
+        @addEvent="addProjectEvent"
         v-model="searchQuery"
     />
     <fly-object-menu
@@ -78,6 +79,9 @@
         v-model:show="objectImageShow"
         :object="activeObject"
     />
+    <add-project-window
+        v-model:show="addProjectShow"
+    />
 </template>
 
 <script>
@@ -91,6 +95,7 @@ import ObjectImageComponent from '../components/ObjectImageComponent.vue'
 
 import { ref, getCurrentInstance, computed } from 'vue'
 import { mapGetters } from 'vuex'
+import AddProjectWindow from '../components/AddProjectWindow.vue'
 
 export default {
     setup(){
@@ -152,6 +157,7 @@ export default {
         FlyObjectMenu,
         FlyImageComponent,
         ObjectImageComponent,
+        AddProjectWindow,
     },
     data(){
         return {
@@ -163,6 +169,7 @@ export default {
             loadingObject: false,
             flyImageShow: false,
             objectImageShow: false,
+            addProjectShow: false,
             map_parameters:{
                 center: [55.737722, 37.732367],
                 zoom: 6,
@@ -192,6 +199,7 @@ export default {
             this.projects.target_project_id = id
             this.fetchFlying(id)
             this.fetchObjects(id)
+            this.closeSideMenu()
         },
         deployFlyChange(cmd){
             let fly = this.flying.find(fly => fly.id === cmd.id);
@@ -297,14 +305,14 @@ export default {
         centeringMap(){
             let max_min_lat = [0,0]
             let max_min_lon = [0,0]
-            if (this.objects.lenght!=0){
+            if (this.objects.length!=0){
                 max_min_lat[0] = this.objects[0].coords[0]
                 max_min_lat[1] = this.objects[0].coords[0]
 
                 max_min_lon[0] = this.objects[0].coords[1]
                 max_min_lon[1] = this.objects[0].coords[1]
             }
-            else if(this.flying.lenght!=0){
+            else if(this.flying.length!=0){
                 max_min_lat[0] = this.flying[0].photos[0].coords[0]
                 max_min_lat[1] = this.flying[0].photos[0].coords[0]
 
@@ -347,6 +355,15 @@ export default {
                 })
             })
             this.map_parameters.center = [(max_min_lat[0]+max_min_lat[1])/2, (max_min_lon[0]+max_min_lon[1])/2]
+        },
+        addProjectEvent(){
+            this.addProjectShow = true
+            this.closeSideMenu()
+        },
+        closeSideMenu(){
+            var link = document.getElementById('#'+this.sideMenuProps.target_canvas_id+'_button');
+            var event = new CustomEvent("click")
+            link.dispatchEvent(event)
         }
     },
     watch:{

@@ -39,7 +39,7 @@ function updateToken(){
         }
     }
 }
-updateToken()
+setTimeout(updateToken, 10)
 
 const getters = {
     STATE: state => {
