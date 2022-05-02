@@ -81,6 +81,7 @@
     />
     <add-project-window
         v-model:show="addProjectShow"
+        @updateProjects="fetchProjects"
     />
 </template>
 
@@ -167,6 +168,7 @@ export default {
             },
             loadingFly: false,
             loadingObject: false,
+            loadingProject: false,
             flyImageShow: false,
             objectImageShow: false,
             addProjectShow: false,
@@ -190,7 +192,7 @@ export default {
             return this.objects.find(object=>object.active)
         },
         loading(){
-            return this.loadingFly || this.loadingObject
+            return this.loadingFly || this.loadingObject || this.loadingProject
         },
         ...mapGetters('account',['STATE']),
     },

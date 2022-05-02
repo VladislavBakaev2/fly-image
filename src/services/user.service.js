@@ -14,6 +14,7 @@ export const userService = {
 
 
 function updateToken(token){
+    console.log('update token')
     const headers =  {
             headers: {'Authorization': 'Bearer ' + token}
         }
@@ -42,7 +43,7 @@ function getUser(token){
 }
 
 function login(email, password) {
-    return base.post('account/auth/signin/', {'account':{ email, password }})
+    return base.post('account/auth/signin', {'account':{ email, password }})
         .then(handleResponse)
         .then(user => {
             // login successful if there's a jwt token in the response
@@ -61,7 +62,7 @@ function logout() {
 }
 
 function register(user) {
-    return base.post(`account/auth/signup/`, {'account':user}).then(handleResponse);
+    return base.post(`account/auth/signup`, {'account':user}).then(handleResponse);
 }
 
 function handleResponse(response) {

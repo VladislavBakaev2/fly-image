@@ -11,7 +11,7 @@ function updateToken(){
     }
     else{
         if (token.expiration<Date.now()){
-            store.commit('account/loginSuccess')
+            store.commit('account/logout')
             userService.logout();
         }
         else{
