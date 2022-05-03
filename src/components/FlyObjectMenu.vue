@@ -1,5 +1,6 @@
 <template>
-    <div class="position-fixed fixed-bottom">
+    <div class="position-fixed fixed-bottom d-flex flex-column">
+        <button v-if="$store.state.account.status.loggedIn" type="button" class="btn button-style" @click="addEvent">Добавить полет</button>
         <map-element-component
             v-model:open="object_menu.open"
             :activeButton="object_swipe_button_state"
@@ -11,6 +12,7 @@
                     v-for="object in visible_objects"
                     :key="object.id"
                     :object="object"
+                    @click="objectComponentClisk(object.coords)"
                 />
             </transition-group>
         </map-element-component>
@@ -22,6 +24,7 @@
         >
             <transition-group name="component-list">
                 <fly-component
+                    @click="flyComponentClick(fly.id)"
                     v-for="fly in visible_flying"
                     :key="fly.id"
                     :fly="fly"
@@ -116,7 +119,16 @@ export default {
         },
         flyClickRight(){
             this.fly_menu.swipe_fly_parameters.first_element +=1
-        }
+        },
+        flyComponentClick(fly_id){
+            this.$emit('deployFlyChange', {id: fly_id, deployed: true})
+        },
+        addEvent(){
+            this.$emit('addFlyEvent')
+        },
+        objectComponentClisk(coords){
+            this.$emit('centerMapOnObject', coords)
+        },
     }
 }
 </script>
@@ -135,5 +147,16 @@ export default {
 }
 .component-list-leave-active {
   position: absolute;
+}
+.button-style{
+    width: 10%;
+    align-self: center;
+    background-color: #525252;
+    color: white;
+    border-end-end-radius: 0px;
+    border-end-start-radius: 0px;
+    border-top: 1px solid white;
+    border-right: 1px solid white;
+    border-left: 1px solid white;
 }
 </style>

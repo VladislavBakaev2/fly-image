@@ -66,6 +66,9 @@
     <fly-object-menu
         :objects="objects"
         :flying="flying"
+        @deployFlyChange="deployFlyChange"
+        @addFlyEvent="addFlyEvent"
+        @centerMapOnObject="centerMapOnObject"
         v-if="viewFlyObjectMenu"
     />
     <loading
@@ -83,6 +86,9 @@
         v-model:show="addProjectShow"
         @updateProjects="fetchProjects"
     />
+    <add-fly-window
+        v-model:show="addFlyShow"
+    />
 </template>
 
 <script>
@@ -97,6 +103,7 @@ import ObjectImageComponent from '../components/ObjectImageComponent.vue'
 import { ref, getCurrentInstance, computed } from 'vue'
 import { mapGetters } from 'vuex'
 import AddProjectWindow from '../components/AddProjectWindow.vue'
+import AddFlyWindow from '../components/AddFlyWindow.vue'
 
 export default {
     setup(){
@@ -159,6 +166,7 @@ export default {
         FlyImageComponent,
         ObjectImageComponent,
         AddProjectWindow,
+        AddFlyWindow,
     },
     data(){
         return {
@@ -172,6 +180,7 @@ export default {
             flyImageShow: false,
             objectImageShow: false,
             addProjectShow: false,
+            addFlyShow: false,
             map_parameters:{
                 center: [55.737722, 37.732367],
                 zoom: 6,
@@ -206,6 +215,10 @@ export default {
         deployFlyChange(cmd){
             let fly = this.flying.find(fly => fly.id === cmd.id);
             fly.deployed = cmd.deployed
+            this.map_parameters.center = fly.photos[0].coords
+        },
+        centerMapOnObject(coords){
+            this.map_parameters.center = coords
         },
         clickImage(cmd){
             let target_fly = this.flying.find(fly=>fly.id == cmd.fly_id)
@@ -366,6 +379,9 @@ export default {
             var link = document.getElementById('#'+this.sideMenuProps.target_canvas_id+'_button');
             var event = new CustomEvent("click")
             link.dispatchEvent(event)
+        },
+        addFlyEvent(){
+            this.addFlyShow = true
         }
     },
     watch:{
