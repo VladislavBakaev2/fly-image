@@ -1,6 +1,6 @@
 <template>
     <div class="position-fixed fixed-bottom d-flex flex-column">
-        <button v-if="$store.state.account.status.loggedIn" type="button" class="btn button-style" @click="addEvent">Добавить полет</button>
+        <button v-if="$store.state.account.status.loggedIn" type="button" class="btn button-style" @click="addEvent">Добавить новый полет</button>
         <map-element-component
             v-model:open="object_menu.open"
             :activeButton="object_swipe_button_state"
@@ -149,7 +149,7 @@ export default {
   position: absolute;
 }
 .button-style{
-    width: 10%;
+    width: 20%;
     align-self: center;
     background-color: #525252;
     color: white;

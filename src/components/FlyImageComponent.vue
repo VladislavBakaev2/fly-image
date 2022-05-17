@@ -56,6 +56,7 @@ export default {
             cssModal:{
                 maxWidth: "80%",
                 maxHeight: "90%",
+                overflow: 'hidden'
             }
         }
     },

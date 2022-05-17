@@ -64,6 +64,7 @@ export default {
             cssModal:{
                 maxWidth: "80%",
                 maxHeight: "90%",
+                overflow: 'hidden'
             },
             target_object_id: null
         }

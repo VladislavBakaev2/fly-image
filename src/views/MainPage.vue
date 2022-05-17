@@ -88,6 +88,8 @@
     />
     <add-fly-window
         v-model:show="addFlyShow"
+        v-model:loading="creatingFly"
+        :project_id="projects.target_project_id"
     />
 </template>
 
@@ -177,6 +179,7 @@ export default {
             loadingFly: false,
             loadingObject: false,
             loadingProject: false,
+            creatingFly: false,
             flyImageShow: false,
             objectImageShow: false,
             addProjectShow: false,
@@ -201,7 +204,7 @@ export default {
             return this.objects.find(object=>object.active)
         },
         loading(){
-            return this.loadingFly || this.loadingObject || this.loadingProject
+            return this.loadingFly || this.loadingObject || this.loadingProject || this.creatingFly
         },
         ...mapGetters('account',['STATE']),
     },

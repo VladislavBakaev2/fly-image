@@ -30,13 +30,12 @@
                     <input v-model="flyParams.camera" type="text" name="camera" style="width:40%"/>
                 </div>
                 <div class="d-flex flex-row justify-content-between mb-1">
-                    <label for="comment">Комментарий</label>
-                    <textarea v-model="flyParams.commentary" rows="2" name="comment" style="width:40%"/>
-                </div>
-
-                <div class="d-flex flex-row justify-content-between mb-1">
                     <label for="date">Дата полета</label>
                     <Datepicker v-model="flyParams.flyDate" style="width:40%"></Datepicker>
+                </div>
+                <div class="d-flex flex-row justify-content-between mb-1">
+                    <label for="comment">Комментарий</label>
+                    <textarea v-model="flyParams.commentary" rows="2" name="comment" style="width:40%"/>
                 </div>
                 
                 <div class="d-flex flex-row justify-content-between mb-1">
@@ -59,7 +58,7 @@
                         class="d-flex flex-column align-items-center"
                     >
                         <img 
-                            :src="image.fileUrl" 
+                            :src="image.fileUrl.src" 
                             class="preview" 
                             height="100"
                             :class="{'error-image':invalidImages.includes(image.name)}"
@@ -79,11 +78,11 @@
                 </div>
             </div>
             <button @click="addButton" class="btn button-style">Создать полет</button>
-                <div class="tooltip-style">
-                    <input type="checkbox" style="margin-right: 10px" name="save">
+                <!-- <div class="tooltip-style">
+                    <input type="checkbox" style="margin-right: 10px;" name="save">
                     <label for="save">С сохранением в фолографий в базу данных</label>
                     <span>При включении данной функции фотограграфии не будут загружены в бд. Будут загружены только те фотографии, на который будут отмечены объекты в течении текущей сессии</span>
-                </div>
+                </div> -->
         </div>
     </modal-window>
 </template>
@@ -104,7 +103,8 @@ export default {
         function handleEvent(event, image, reader) {
             if (['loadend', 'load'].includes(event.type)) {
                 image.currentProgress = '100%';
-                image.fileUrl = reader.result;
+                image.fileUrl = new Image()
+                image.fileUrl.src = reader.result;
                 if(images.value.filter(data=>data.fileUrl==null)==0){
                     currentStep+=1
                     setTimeout(loadDataPiece(), 500)
@@ -161,6 +161,12 @@ export default {
         show:{
             type: Boolean,
             default: false
+        },
+        project_id:{
+            type: Number
+        },
+        loading:{
+            type: Boolean
         }
     },
     components: { 
@@ -175,6 +181,7 @@ export default {
             },
             errors: null,
             imagesCoordsData: {},
+            file: null,
             
             flyParams:{
                 flyDate: null,
@@ -194,6 +201,7 @@ export default {
         uploadTxtFile(e){
             this.imagesCoordsData={}
             if(e.target.files[0]){
+                this.file = e.target.files[0]
                 const reader = new FileReader();                
                 reader.onload=()=>{
                     let targetText = reader.result.split('\r\n');
@@ -205,6 +213,7 @@ export default {
                     });
                 }
                 reader.readAsText(e.target.files[0])
+                this.errors = null
             }
         },
         addButton(){
@@ -216,8 +225,63 @@ export default {
                 this.errors="Трубуется дата полета"
                 return
             }
+            if(this.invalidImages.length!=0 || Object.keys(this.imagesCoordsData).length==0){
+                this.errors="Требуются координаты для выбранных фотографий"
+                return
+            }
             this.errors = null
-        }
+
+            const headers =  {
+                headers: {'Authorization': 'Bearer ' + this.STATE.token.token},
+                'Content-Type': 'multipart/form-data'
+            }
+
+            var formData = new FormData();
+            var flyData = {
+                name: this.flyParams.flyName,
+                date: this.flyParams.flyDate,
+                project: this.project_id
+            }
+
+            if(this.flyParams.robot){
+                flyData.robot = this.flyParams.robot
+            }
+            if(this.flyParams.camera){
+                flyData.camera = this.flyParams.camera
+            }
+            if(this.flyParams.commentary){
+                flyData.commentary = this.flyParams.commentary
+            }
+            console.log('emit')
+            this.$emit('update:loading', true)
+            formData.append('fly', JSON.stringify(flyData))
+            this.images.forEach((image)=>{
+                formData.append(this.imagesCoordsData[image.name][0]+';'+this.imagesCoordsData[image.name][1], this.dataURLtoFile(image.fileUrl.src, image.name))
+            })
+            this.$http.post('api/fly/create', formData, headers).then((response)=>{
+                if(response.status==201){
+                    this.$emit('update:loading', false)
+                    console.log('stop emit')
+                    alert('Полет успешно сохранен в базу данных')
+                }
+            }).catch((error)=>{
+                console.log(error)
+            })
+        },
+        dataURLtoFile(dataurl, filename) {
+ 
+            var arr = dataurl.split(','),
+                mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]), 
+                n = bstr.length, 
+                u8arr = new Uint8Array(n);
+                
+            while(n--){
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            
+            return new File([u8arr], filename, {type:mime});
+    }
     },
     computed:{
         ...mapGetters('account',['STATE']),
@@ -275,7 +339,7 @@ export default {
 	display			: none; 
 	padding			: 2px 3px; 
 	margin-left		: 8px; 
-	width			: 230px;
+	width			: 330px;
 }
 .tooltip-style:hover span {
 	display			: inline; 
