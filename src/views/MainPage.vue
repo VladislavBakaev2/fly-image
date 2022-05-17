@@ -54,6 +54,7 @@
             @deployFlyChange="deployFlyChange"
             @clickImage="clickImage"
             @clickObject="clickObject"
+            @editFly="editFlyEvent"
         />
     </div>
     <projects-menu
@@ -90,6 +91,7 @@
         v-model:show="addFlyShow"
         v-model:loading="creatingFly"
         :project_id="projects.target_project_id"
+        :editFly="editFly"
     />
 </template>
 
@@ -184,6 +186,7 @@ export default {
             objectImageShow: false,
             addProjectShow: false,
             addFlyShow: false,
+            editFly: null,
             map_parameters:{
                 center: [55.737722, 37.732367],
                 zoom: 6,
@@ -385,6 +388,10 @@ export default {
         },
         addFlyEvent(){
             this.addFlyShow = true
+        },
+        editFlyEvent(fly){
+            this.addFlyShow = true
+            this.editFly = fly
         }
     },
     watch:{
@@ -407,6 +414,12 @@ export default {
         loading(new_v){
             if(!new_v){
                 this.centeringMap()
+            }
+        },
+        addFlyShow(new_v){
+            if(!new_v){
+                this.editFly = null
+                this.fetchFlying(this.projects.target_project_id)
             }
         }
     },

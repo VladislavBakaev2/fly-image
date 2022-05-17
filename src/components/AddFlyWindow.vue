@@ -77,7 +77,7 @@
                     </div>
                 </div>
             </div>
-            <button @click="addButton" class="btn button-style">Создать полет</button>
+            <button @click="addButton" class="btn button-style">Сохранить полет</button>
                 <!-- <div class="tooltip-style">
                     <input type="checkbox" style="margin-right: 10px;" name="save">
                     <label for="save">С сохранением в фолографий в базу данных</label>
@@ -167,6 +167,9 @@ export default {
         },
         loading:{
             type: Boolean
+        },
+        editFly:{
+            type: Object
         }
     },
     components: { 
@@ -225,7 +228,7 @@ export default {
                 this.errors="Трубуется дата полета"
                 return
             }
-            if(this.invalidImages.length!=0 || Object.keys(this.imagesCoordsData).length==0){
+            if(this.invalidImages.length!=0){
                 this.errors="Требуются координаты для выбранных фотографий"
                 return
             }
@@ -252,21 +255,33 @@ export default {
             if(this.flyParams.commentary){
                 flyData.commentary = this.flyParams.commentary
             }
-            console.log('emit')
             this.$emit('update:loading', true)
-            formData.append('fly', JSON.stringify(flyData))
             this.images.forEach((image)=>{
                 formData.append(this.imagesCoordsData[image.name][0]+';'+this.imagesCoordsData[image.name][1], this.dataURLtoFile(image.fileUrl.src, image.name))
             })
-            this.$http.post('api/fly/create', formData, headers).then((response)=>{
-                if(response.status==201){
-                    this.$emit('update:loading', false)
-                    console.log('stop emit')
-                    alert('Полет успешно сохранен в базу данных')
-                }
-            }).catch((error)=>{
-                console.log(error)
-            })
+            if(!this.editFly){
+                formData.append('fly', JSON.stringify(flyData))
+                this.$http.post('api/fly/create', formData, headers).then((response)=>{
+                    if(response.status==201){
+                        this.$emit('update:loading', false)
+                        alert('Полет успешно сохранен в базу данных')
+                    }
+                }).catch((error)=>{
+                    console.log(error)
+                })
+            }
+            else{
+                flyData.fly = this.editFly.id
+                formData.append('fly', JSON.stringify(flyData))
+                this.$http.put('api/fly/create', formData, headers).then((response)=>{
+                    if(response.status==201){
+                        this.$emit('update:loading', false)
+                        alert('Полет успешно обновлен в базе данных')
+                    }
+                }).catch((error)=>{
+                    console.log(error)
+                })
+            }
         },
         dataURLtoFile(dataurl, filename) {
  
@@ -281,7 +296,7 @@ export default {
             }
             
             return new File([u8arr], filename, {type:mime});
-    }
+        }
     },
     computed:{
         ...mapGetters('account',['STATE']),
@@ -296,6 +311,28 @@ export default {
                 }
             })
             return result
+        }
+    },
+    watch:{
+        editFly(new_v){
+            if(new_v){
+                this.flyParams = {
+                    flyDate: new Date(new_v.at_fly),
+                    flyName: new_v.name,
+                    robot: new_v.robot_type,
+                    camera: new_v.camera_type,
+                    commentary: new_v.commentary,       
+                }
+            }
+            else{
+                this.flyParams= {
+                    flyDate: null,
+                    flyName: null,
+                    robot: null,
+                    camera: null,
+                    commentary: null,
+                }
+            }
         }
     }
 }

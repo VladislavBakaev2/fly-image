@@ -21,6 +21,7 @@
             :icon="{content: `${fly.name}`}"
             :clusterName="'flying'"
             @click="flyOpen(fly)"
+            @contextmenu="openContextMenu($event, fly)"
         />
         <div v-for="fly in deployedFlying"
             :key="fly.id"
@@ -50,17 +51,26 @@
             @balloonopen="balloonOpenObject(object.id, 'object:'+object.id)"
             @ballonclose="ballonCloseObject('object:'+object.id)"
         />
+        <context-menu-component :display="contextMenuParams.showContextMenu" ref="menu">
+            <div class="list-group small">
+                <a @click="contextEditEvent" class="list-group-item list-group-item-action">Добавить новые фотографии</a>
+                <a @click="contextDeleteEvent" class="list-group-item list-group-item-action">Удалить полет</a>
+            </div>
+        </context-menu-component>
     </yandex-map> 
 </template>
 
 <script>
 import axios from "axios"
 import { yandexMap, ymapMarker} from 'vue-yandex-maps'
+import ContextMenuComponent from './ContextMenuComponent.vue'
+
 
 export default {
     components:{
         yandexMap,
         ymapMarker,
+        ContextMenuComponent,
     },
     props:{
         flying:{
@@ -123,7 +133,7 @@ export default {
                 objects:{
                     groupByCoordinates: false,
                     clusterHideIconOnBalloonOpen: false,
-                    gridSize: 200,
+                    gridSize: 10,
                     geoObjectHideIconOnBalloonOpen: false,
                     preset: 'islands#yellowClusterIcons'  
                 }
@@ -134,6 +144,10 @@ export default {
             },
             active_object:{
                 id: null
+            },
+            contextMenuParams:{
+                showContextMenu: false,
+                target: null
             }
         }
     },
@@ -211,6 +225,16 @@ export default {
         changeCenterMap(event){
             this.$emit('update:center', event.originalEvent.newCenter)
         },
+        openContextMenu(e, fly) {
+            this.$refs.menu.open(e);
+            this.contextMenuParams.target = fly
+        },
+        contextDeleteEvent(){
+            console.log('delete')
+        },
+        contextEditEvent(){
+            this.$emit('editFly', this.contextMenuParams.target)
+        }
     },
     computed:{
         nonDeployedFlying(){
