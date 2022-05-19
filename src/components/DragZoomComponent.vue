@@ -1,7 +1,7 @@
 <template>
     <div class="content-style"
-        @mousedown="mouseDownDrag"
-        @mouseup="mouseUpDrag"
+        @mousedown="$event.which==1?mouseDownDrag($event):''"
+        @mouseup="$event.which==1?mouseUpDrag($event):''"
         @mousemove="mouseMoveDrag"
         @mousewheel="mouseWheelDrag"  
     >
@@ -9,9 +9,10 @@
             :style="{transform: `translate(${convertToPx[0]},${convertToPx[1]}) scale(${Math.exp(drag_params.wheel)})`}"
         >
             <canvas id="canvas"
-                @mousedown="mouseDownDraw" 
-                @mouseup="mouseUpDraw" 
-                @mousemove="mouseMoveDraw"            
+                @mousedown="($event.which==3&&STATE.user)?mouseDownDraw($event):''" 
+                @mouseup="($event.which==3&&STATE.user)?mouseUpDraw($event):''" 
+                @mousemove="mouseMoveDraw"
+                @contextmenu.prevent          
             ></canvas>
         </div>
     </div>
@@ -19,12 +20,17 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
+
 export default {
     props:{
         img:{
             type: String
         },
         start_rect:{
+            type: Object
+        },
+        drawn_rectangle:{
             type: Object
         }
     },
@@ -54,27 +60,22 @@ export default {
                 },
                 down: false
             },
-            mode: 'drag',
-            canvas_img: null
+            canvas_img: null,
         }
     },
     methods:{
         mouseDownDrag(e){
             this.drag_params.scaleTransformOrigin = ['0px', '0px']
-            if(this.mode=="drag"){
-                event.preventDefault()
-                this.drag_params.startPoint = {x:e.layerX, y:e.layerY}
-                this.drag_params.isDrag=true
-            }
+            event.preventDefault()
+            this.drag_params.startPoint = {x:e.layerX, y:e.layerY}
+            this.drag_params.isDrag=true
         },
         mouseUpDrag(){
-            if(this.mode=="drag"){
-                this.drag_params.startPoint=null
-                this.drag_params.translate[0] +=this.drag_params.div_translate[0]
-                this.drag_params.translate[1] +=this.drag_params.div_translate[1]
-                this.drag_params.div_translate = [0,0]
-                this.drag_params.isDrag=false
-            }
+            this.drag_params.startPoint=null
+            this.drag_params.translate[0] +=this.drag_params.div_translate[0]
+            this.drag_params.translate[1] +=this.drag_params.div_translate[1]
+            this.drag_params.div_translate = [0,0]
+            this.drag_params.isDrag=false
         },
         mouseMoveDrag(e){
             if(this.drag_params.isDrag){
@@ -92,29 +93,27 @@ export default {
             var c = document.getElementById("canvas");
             var ctx = c.getContext("2d");
             ctx.drawImage(this.canvas_img,0,0);
-            ctx.lineWidth = 3
+            ctx.lineWidth = 6
             ctx.setLineDash([0]);
             ctx.strokeStyle = "red"
             ctx.strokeRect(this.draw_params.rect.startX, this.draw_params.rect.startY, this.draw_params.rect.w, this.draw_params.rect.h);
         },
         mouseDownDraw: function (event) {
-            if(this.mode=="draw"){
-                this.draw_params.down = true;
-                this.draw_params.current = {
-                    x: event.offsetX,
-                    y: event.offsetY
-                }
-                this.draw_params.rect.startX = this.draw_params.current.x;
-                this.draw_params.rect.startY = this.draw_params.current.y;
+            event.preventDefault()
+            this.draw_params.down = true;
+            this.draw_params.current = {
+                x: event.offsetX,
+                y: event.offsetY
             }
+            this.draw_params.rect.startX = this.draw_params.current.x;
+            this.draw_params.rect.startY = this.draw_params.current.y;
         },
         mouseUpDraw: function () {
-            if(this.mode=="draw"){
-                this.draw_params.down = false;
-            }
+            this.draw_params.down = false;
+            this.$emit('update:drawn_rectangle', this.draw_params.rect)
         },
         mouseMoveDraw: function (event) {
-            if(this.mode=='draw'){
+            if(this.draw_params.down == true){
                 this.draw_params.current = {
                     x: event.offsetX,
                     y: event.offsetY
@@ -154,6 +153,7 @@ export default {
             return [this.drag_params.translate[0]+this.drag_params.div_translate[0]+'px',
                     this.drag_params.translate[1]+this.drag_params.div_translate[1]+'px']
         },
+        ...mapGetters('account',['STATE']),
     },
     mounted(){
         this.updateCanvas()

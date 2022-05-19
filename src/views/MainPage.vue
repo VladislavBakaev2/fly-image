@@ -55,6 +55,8 @@
             @clickImage="clickImage"
             @clickObject="clickObject"
             @editFly="editFlyEvent"
+            @rightClickMap="clickOnMap"
+            @rightClickObject="clickOnObject"
         />
     </div>
     <projects-menu
@@ -78,6 +80,7 @@
     <fly-image-component
         v-model:show="flyImageShow"
         :flying="flying"
+        @createObject="createNewObject"
     />
     <object-image-component
         v-model:show="objectImageShow"
@@ -187,6 +190,7 @@ export default {
             addProjectShow: false,
             addFlyShow: false,
             editFly: null,
+            creatingObject: null,
             map_parameters:{
                 center: [55.737722, 37.732367],
                 zoom: 6,
@@ -376,6 +380,7 @@ export default {
                 })
             })
             this.map_parameters.center = [(max_min_lat[0]+max_min_lat[1])/2, (max_min_lon[0]+max_min_lon[1])/2]
+            this.map_parameters.zoom = 6
         },
         addProjectEvent(){
             this.addProjectShow = true
@@ -392,6 +397,21 @@ export default {
         editFlyEvent(fly){
             this.addFlyShow = true
             this.editFly = fly
+        },
+        createNewObject(object){
+            this.creatingObject = object
+        },
+        clickOnMap(){
+            if(this.creatingObject){
+                console.log("создать новый объект")
+                this.creatingObject=null
+            }
+        },
+        clickOnObject(id){
+            if(this.creatingObject){
+                console.log(`добвить объект в хронологию ${id}`)
+                this.creatingObject=null
+            }
         }
     },
     watch:{

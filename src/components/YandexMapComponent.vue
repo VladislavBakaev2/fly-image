@@ -12,6 +12,7 @@
         :zoom="zoom"
         :coords="center"
         @boundschange="changeZoom($event), changeCenterMap($event)"
+        @mouseup="rightClickMap"
     >
         <ymap-marker
             v-for="fly in nonDeployedFlying"
@@ -50,6 +51,7 @@
             :balloon-template="balloonTemplateObject(object, 'object:'+object.id)"
             @balloonopen="balloonOpenObject(object.id, 'object:'+object.id)"
             @ballonclose="ballonCloseObject('object:'+object.id)"
+            @contextmenu="rightClickObject($event, object.id)"
         />
         <context-menu-component :display="contextMenuParams.showContextMenu" ref="menu">
             <div class="list-group small">
@@ -126,14 +128,14 @@ export default {
                 photos:{
                     groupByCoordinates: false,
                     clusterHideIconOnBalloonOpen: false,
-                    gridSize: 200,
+                    gridSize: 5,
                     geoObjectHideIconOnBalloonOpen: false,
                     preset: 'islands#redClusterIcons'
                 },
                 objects:{
                     groupByCoordinates: false,
                     clusterHideIconOnBalloonOpen: false,
-                    gridSize: 10,
+                    gridSize: 200,
                     geoObjectHideIconOnBalloonOpen: false,
                     preset: 'islands#yellowClusterIcons'  
                 }
@@ -234,6 +236,14 @@ export default {
         },
         contextEditEvent(){
             this.$emit('editFly', this.contextMenuParams.target)
+        },
+        rightClickObject(e, object_id){
+            this.$emit('rightClickObject', object_id)
+        },
+        rightClickMap(e){
+            if(e.which==3){
+                setTimeout(this.$emit('rightClickMap', {}),200)
+            }
         }
     },
     computed:{
