@@ -127,6 +127,7 @@ export default {
         },
 
         updateCanvas(){
+            console.log('new')
             var img = new Image();
             var myCanvas = document.getElementById('canvas');
             var ctx = myCanvas.getContext('2d');
@@ -161,8 +162,13 @@ export default {
     watch:{
         img(){
             this.updateCanvas()
-            this.drag_params.translate = [0,0]
-            this.drag_params.wheel = 0.0
+            // this.drag_params.translate = [0,0]
+            // this.drag_params.wheel = 0.0
+        },
+        start_rect(){
+            this.updateCanvas()
+            // this.drag_params.translate = [0,0]
+            // this.drag_params.wheel = 0.0
         }
     }
 }

@@ -401,16 +401,69 @@ export default {
         createNewObject(object){
             this.creatingObject = object
         },
-        clickOnMap(){
+        async clickOnMap(){
             if(this.creatingObject){
                 console.log("создать новый объект")
-                this.creatingObject=null
+                let requestData = {}
+                requestData = this.creatingObject
+                requestData.project_id=this.projects.target_project_id
+                requestData.coordinate = this.mouseCoord[0]+';'+this.mouseCoord[1]
+
+
+                // this.creatingObject=null
+                const headers =  {
+                    headers: {'Authorization': 'Bearer ' + this.STATE.token.token}
+                }
+                try{
+                    await this.$http.post('/api/object/create', requestData, headers)
+                    this.flying.forEach(fly=>{
+                        if(fly.id==this.creatingObject.fly_id){
+                            fly.photos.forEach(photo=>{
+                                if(photo.id==this.creatingObject.photo_id){
+                                    photo.active=true
+                                }
+                            })
+                        }
+                    })
+                    this.flyImageShow=true
+                    this.creatingObject = null
+                }
+                catch (e){
+                    console.log(e)
+                }
             }
         },
-        clickOnObject(id){
+        async clickOnObject(id){
             if(this.creatingObject){
-                console.log(`добвить объект в хронологию ${id}`)
-                this.creatingObject=null
+                console.log("создать новый объект")
+                let requestData = {}
+                requestData = this.creatingObject
+                requestData.project_id=this.projects.target_project_id
+                requestData.target_id=id
+                requestData.coordinate = this.mouseCoord[0]+';'+this.mouseCoord[1]
+
+
+                // this.creatingObject=null
+                const headers =  {
+                    headers: {'Authorization': 'Bearer ' + this.STATE.token.token}
+                }
+                try{
+                    await this.$http.post('/api/object/create', requestData, headers)
+                    this.flying.forEach(fly=>{
+                        if(fly.id==this.creatingObject.fly_id){
+                            fly.photos.forEach(photo=>{
+                                if(photo.id==this.creatingObject.photo_id){
+                                    photo.active=true
+                                }
+                            })
+                        }
+                    })
+                    this.flyImageShow=true
+                    this.creatingObject = null
+                }
+                catch (e){
+                    console.log(e)
+                }
             }
         }
     },

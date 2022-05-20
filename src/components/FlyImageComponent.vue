@@ -69,7 +69,7 @@ export default {
         return{
             cssModal:{
                 maxWidth: "80%",
-                maxHeight: "90%",
+                maxHeight: "95%",
                 overflow: 'hidden'
             },
             drawn_rectangle: null,
@@ -85,7 +85,7 @@ export default {
             this.drawn_rectangle = null
         },
         createObjectEvent(){
-            this.$emit('createObject',  {...this.object, rect:this.drawn_rectangle})
+            this.$emit('createObject',  {...this.object, rect:this.drawn_rectangle, photo_id: this.activePhoto.photo.id, fly_id: this.activePhoto.fly.id})
             this.dialogHidden()
         }
     },

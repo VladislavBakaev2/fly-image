@@ -5,8 +5,8 @@
         :modalStyle="cssModal"
     >
         <drag-zoom-component
-            :img="object.objects[target_object_id].ref_photo"
-            :start_rect="object.objects[target_object_id].rect"
+            :img="targetObject.ref_photo"
+            :start_rect="targetObject.rect"
         >
             <div class="data-style d-flex flex-column text-light">
                 <div class="d-flex flex-row" style="margin-bottom: 10px">
@@ -73,6 +73,11 @@ export default {
         dialogHidden() {
             this.$emit("update:show", false)
         },
+    },
+    computed:{
+        targetObject(){
+            return this.object.objects[this.target_object_id]
+        }
     },
     watch:{
         object(){
