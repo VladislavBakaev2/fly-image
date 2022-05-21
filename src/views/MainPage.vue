@@ -72,8 +72,14 @@
         @deployFlyChange="deployFlyChange"
         @addFlyEvent="addFlyEvent"
         @centerMapOnObject="centerMapOnObject"
-        v-if="viewFlyObjectMenu"
+        v-if="viewFlyObjectMenu&&creatingObject==null"
     />
+    <div
+        v-if="creatingObject" 
+        class="add-object-info-style text-white d-flex justify-content-center align-items-center"
+    >
+        <div>Нажмите правую кнопку мыши для сохранения объекта на карте</div>
+    </div>
     <loading
         v-model="loading"
     />
@@ -540,5 +546,14 @@ export default {
 .toggle-button-style{
     align-self: center;
     margin-left: 20px;
+}
+.add-object-info-style{
+    position: absolute;
+    bottom: 0;
+    height: 50px;
+    width: 100%;
+    background-color: rgba(76, 74, 74, 0.781);
+    border-top: 1px solid gray;
+    font-weight: 600;
 }
 </style>
