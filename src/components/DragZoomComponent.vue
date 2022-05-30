@@ -3,16 +3,19 @@
         @mousedown="$event.which==1?mouseDownDrag($event):''"
         @mouseup="$event.which==1?mouseUpDrag($event):''"
         @mousemove="mouseMoveDrag"
-        @mousewheel="mouseWheelDrag"  
+        @mousewheel="mouseWheelDrag"
+        ref="content_div"
     >
         <div 
-            :style="{transform: `translate(${convertToPx[0]},${convertToPx[1]}) scale(${Math.exp(drag_params.wheel)})`}"
+            :style="{transform: `translate(${convertToPx[0]},${convertToPx[1]}) scale(${drag_params.scale})`}"
+            class="image-div-style"
         >
             <canvas id="canvas"
                 @mousedown="($event.which==3&&STATE.user)?mouseDownDraw($event):''" 
                 @mouseup="($event.which==3&&STATE.user)?mouseUpDraw($event):''" 
                 @mousemove="mouseMoveDraw"
-                @contextmenu.prevent          
+                @contextmenu.prevent
+                ref="image"
             ></canvas>
         </div>
     </div>
@@ -41,7 +44,7 @@ export default {
                 translate: [0,0],
                 div_translate: [0,0],
                 startPoint: null,
-                wheel: 0.0
+                scale: 1.0,
             },
             draw_params: {
                 current: {
@@ -65,7 +68,6 @@ export default {
     },
     methods:{
         mouseDownDrag(e){
-            this.drag_params.scaleTransformOrigin = ['0px', '0px']
             event.preventDefault()
             this.drag_params.startPoint = {x:e.layerX, y:e.layerY}
             this.drag_params.isDrag=true
@@ -84,7 +86,19 @@ export default {
             }
         },
         mouseWheelDrag(e){
-            this.drag_params.wheel +=e.wheelDeltaY/1000
+            const x = e.layerX
+            const y = e.layerY
+            let amount;
+            if (e.wheelDeltaY>0){
+                this.drag_params.scale *= 1.1
+                amount = 1.1
+            }
+            else{
+                this.drag_params.scale *=0.9
+                amount = 0.9
+            }
+            this.drag_params.translate[0] = x-(x-this.drag_params.translate[0])*amount
+            this.drag_params.translate[1] = y-(y-this.drag_params.translate[1])*amount
         },
 
 
@@ -127,14 +141,13 @@ export default {
         },
 
         updateCanvas(){
-            console.log('new')
             var img = new Image();
             var myCanvas = document.getElementById('canvas');
             var ctx = myCanvas.getContext('2d');
             img.onload = ()=>{
                 myCanvas.width = img.width
                 myCanvas.height = img.height
-                ctx.drawImage(img,0,0); // Or at whatever offset you like
+                ctx.drawImage(img,0,0);
                 if(this.start_rect){
                     this.draw_params.rect = {
                         startX: this.start_rect.startX,
@@ -143,18 +156,51 @@ export default {
                         h: this.start_rect.h
                     }
                     this.drawRecrangle()
+                    const point = {
+                        x: this.$refs.content_div.offsetWidth/2,
+                        y: this.$refs.content_div.offsetHeight/2
+                    }
+                    this.drag_params.translate[0] = point.x - this.start_rect.startX - this.start_rect.w/2
+                    this.drag_params.translate[1] = point.y - this.start_rect.startY - this.start_rect.h/2
+
+                    let scale_w = 1;
+                    let scale_h = 1;
+                    if(point.x*2 < this.start_rect.w){
+                        scale_w = this.start_rect.w/(point.x*2)+0.1
+                    }
+
+                    if(point.y*2 < this.start_rect.h){
+                        scale_h = this.start_rect.h/(point.y*2)+0.1
+                    }
+                    const scale = scale_w>scale_h?scale_w:scale_h
+
+                    this.scaleAtPoint(point, 1/scale)
+
                 }
             };
             img.src = this.img;
             this.canvas_img=img
+        },
+        scaleAtPoint(point, scale){
+            this.drag_params.translate[0] = point.x-(point.x-this.drag_params.translate[0])*scale
+            this.drag_params.translate[1] = point.y-(point.y-this.drag_params.translate[1])*scale
+            this.drag_params.scale *=scale
         }
     },
     computed:{
         convertToPx(){
-            return [this.drag_params.translate[0]+this.drag_params.div_translate[0]+'px',
-                    this.drag_params.translate[1]+this.drag_params.div_translate[1]+'px']
+            return [this.translate[0]+'px', this.translate[1]+'px']
+        },
+        translate(){
+            return [
+                this.drag_params.translate[0]+this.drag_params.div_translate[0],
+                this.drag_params.translate[1]+this.drag_params.div_translate[1]
+            ]
         },
         ...mapGetters('account',['STATE']),
+        scale(){
+            return this.drag_params.scale
+        }
     },
     mounted(){
         this.updateCanvas()
@@ -162,13 +208,9 @@ export default {
     watch:{
         img(){
             this.updateCanvas()
-            // this.drag_params.translate = [0,0]
-            // this.drag_params.wheel = 0.0
         },
         start_rect(){
             this.updateCanvas()
-            // this.drag_params.translate = [0,0]
-            // this.drag_params.wheel = 0.0
         }
     }
 }
@@ -177,9 +219,13 @@ export default {
 <style scoped>
 .content-style{
     display: inline-block;
-    width: 100%;
     height: 100%;
     overflow: hidden;
     margin: 20px;
+}
+.image-div-style{
+    transform-origin: top left;
+    display: flex;
+    width: auto;
 }
 </style>
