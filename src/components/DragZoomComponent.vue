@@ -101,8 +101,6 @@ export default {
             this.drag_params.translate[1] = y-(y-this.drag_params.translate[1])*amount
         },
 
-
-
         drawRecrangle: function () {
             var c = document.getElementById("canvas");
             var ctx = c.getContext("2d");
@@ -173,7 +171,7 @@ export default {
                         scale_h = this.start_rect.h/(point.y*2)+0.1
                     }
                     const scale = scale_w>scale_h?scale_w:scale_h
-
+                    this.drag_params.scale = 1
                     this.scaleAtPoint(point, 1/scale)
 
                 }

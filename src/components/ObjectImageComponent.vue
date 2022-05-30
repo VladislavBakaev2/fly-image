@@ -35,9 +35,25 @@
                     </div>
                 </div>
                 <div class="d-flex flex-row align-items-center justify-content-center">
-                    <div><button type="button" class="btn btn-outline-secondary" @click="target_object_id--" :disabled="target_object_id==0">-</button></div>
-                    <div class="" >{{target_object_id+1}}/{{object.objects.length}}</div>
-                    <div><button type="button" class="btn btn-outline-secondary" @click="target_object_id++" :disabled="target_object_id==object.objects.length-1">+</button></div>
+                    <div>
+                        <button type="button" class="btn btn-outline-secondary" @click="target_object_id--" :disabled="target_object_id==0">
+                            <BootstrapIcon
+                                :icon="target_object_id==0?'caret-left':'caret-left-fill'"
+                                size="md"
+                                variant="light"
+                            />
+                        </button>
+                    </div>
+                    <div class="m-1" >{{target_object_id+1}}/{{object.objects.length}}</div>
+                    <div>
+                        <button type="button" class="btn btn-outline-secondary" @click="target_object_id++" :disabled="target_object_id==object.objects.length-1">
+                            <BootstrapIcon
+                                :icon="target_object_id==object.objects.length-1?'caret-right':'caret-right-fill'"
+                                size="md"
+                                variant="light"
+                            />
+                        </button>
+                    </div>
                 </div>
             </div>
         </drag-zoom-component>
