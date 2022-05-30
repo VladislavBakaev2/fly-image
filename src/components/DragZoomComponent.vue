@@ -177,6 +177,23 @@ export default {
                     this.scaleAtPoint(point, 1/scale)
 
                 }
+                else{
+                    const content = {
+                        w: this.$refs.content_div.offsetWidth,
+                        h: this.$refs.content_div.offsetHeight
+                    }
+                    let scale_w = 1;
+                    let scale_h = 1;
+                    if(content.w*2 < img.width){
+                        scale_w = img.width/(content.w)
+                    }
+
+                    if(content.h*2 < img.height){
+                        scale_h = img.height/(content.h)
+                    }
+                    const scale = scale_w>scale_h?scale_w:scale_h
+                    this.drag_params.scale = 1/scale
+                }
             };
             img.src = this.img;
             this.canvas_img=img
