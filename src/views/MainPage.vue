@@ -52,11 +52,11 @@
             :flying="flying"
             :objects="objects"
             @deployFlyChange="deployFlyChange"
-            @clickImage="clickImage"
+            @clickImage="clickFlyImage"
             @clickObject="clickObject"
             @editFly="editFlyEvent"
-            @rightClickMap="clickOnMap"
-            @rightClickObject="clickOnObject"
+            @rightClickMap="createNewObjectEvent"
+            @rightClickObject="addDataToObjectEvent"
         />
     </div>
     <projects-menu
@@ -86,7 +86,7 @@
     <fly-image-component
         v-model:show="flyImageShow"
         :flying="flying"
-        @createObject="createNewObject"
+        @createObject="setCreatingObjectEvent"
     />
     <object-image-component
         v-model:show="objectImageShow"
@@ -99,7 +99,7 @@
     <add-fly-window
         v-model:show="addFlyShow"
         v-model:loading="creatingFly"
-        :project_id="projects.target_project_id"
+        :project_id="target_project_id"
         :editFly="editFly"
     />
 </template>
@@ -113,62 +113,20 @@ import FlyObjectMenu from '@/components/FlyObjectMenu.vue'
 import FlyImageComponent from '../components/FlyImageComponent.vue'
 import ObjectImageComponent from '../components/ObjectImageComponent.vue'
 
-import { ref, getCurrentInstance, computed } from 'vue'
 import { mapGetters } from 'vuex'
 import AddProjectWindow from '../components/AddProjectWindow.vue'
 import AddFlyWindow from '../components/AddFlyWindow.vue'
 
+import {useProjectsApi} from '@/views/MainPage/projects.js'
+import {useFlyingApi} from '@/views/MainPage/flying.js'
+import {useObjectsApi} from '@/views/MainPage/objects.js'
+
 export default {
     setup(){
-        const app = getCurrentInstance()
-        const http = app.appContext.config.globalProperties.$http
-
-        const projects = ref({
-                target_project_id: null,
-                all_projects: [
-                    // {id: 1, name: "Побережье", fly_count: 2, object_count:10},
-                ]
-        })
-        const searchQuery = ref('')
-
-        const fetchProjects = ()=>{
-            http.get('api/project/get')
-                .then((response)=>{
-                    if(response.statusText=='OK'){
-                        projects.value.all_projects = []
-                        projects.value.target_project_id = null
-                        response.data.forEach((project)=>{
-                            let new_project = {}
-                            new_project.id = project.id
-                            new_project.author = project.author
-                            new_project.fly_count = project.fly_count
-                            new_project.object_count = project.object_count
-                            new_project.name = project.name
-                            new_project.at_create = project.at_create.split('T')[0]
-                            new_project.at_update = project.at_update.split('T')[0]
-                            projects.value.all_projects.push(new_project)
-                        })
-                    }
-                })
-                .catch((error)=>{
-                    if(error.name=="Error"){
-                        alert('Нет соединения с сервером (загрузка проектов)')
-                    }
-                    else{
-                        alert('Ошибка обработки ответа (загрузка проектов)')
-                    }
-                })
-        }
-        const searcherProjects =computed(()=>{
-            return projects.value.all_projects.filter(project=>project.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
-        })
-
-        return {
-            projects,
-            fetchProjects,
-            searcherProjects,
-            searchQuery
-        }
+        const apiProject = useProjectsApi()
+        const flyingApi = useFlyingApi()
+        const objectApi = useObjectsApi()
+        return {...apiProject, ...flyingApi, ...objectApi}
     },
     components:{
         YandexMapComponent,
@@ -187,153 +145,50 @@ export default {
                 target_canvas_id: "sideMenu",
                 header_height: '50px'
             },
-            loadingFly: false,
-            loadingObject: false,
-            loadingProject: false,
-            creatingFly: false,
-            flyImageShow: false,
-            objectImageShow: false,
-            addProjectShow: false,
-            addFlyShow: false,
-            editFly: null,
-            creatingObject: null,
             map_parameters:{
                 center: [55.737722, 37.732367],
                 zoom: 6,
             },
-            objects:[
-            ],
-            flying:[
-            ],
             mouseCoord: [0,0,0]
         }
     },
 
     computed:{
-        viewFlyObjectMenu(){
-            return this.projects.target_project_id
+        viewFlyObjectMenu(){ //флаг, сообщает о необходимости показывать и не показывать списки полетов и объектов
+            return this.target_project_id
         },
-        activeObject(){
-            return this.objects.find(object=>object.active)
-        },
-        loading(){
+        loading(){ //статус загрузки
             return this.loadingFly || this.loadingObject || this.loadingProject || this.creatingFly
         },
         ...mapGetters('account',['STATE']),
     },
     methods:{
-        updateTargetProject(id){
-            this.projects.target_project_id = id
+        updateTargetProject(id){ // при выборе проекта меняется id активного проекта, подтягивается данные полетов и объектов для проекта
+            this.target_project_id = id
             this.fetchFlying(id)
             this.fetchObjects(id)
             this.closeSideMenu()
         },
-        deployFlyChange(cmd){
-            let fly = this.flying.find(fly => fly.id === cmd.id);
-            fly.deployed = cmd.deployed
-            this.map_parameters.center = fly.photos[0].coords
+        addProjectEvent(){ // вызов нового окна создания нового проекта
+            this.addProjectShow = true
+            this.closeSideMenu()
         },
-        centerMapOnObject(coords){
+        closeSideMenu(){ // закрыть боковое меню с проектами 
+            var link = document.getElementById('#'+this.sideMenuProps.target_canvas_id+'_button');
+            var event = new CustomEvent("click")
+            link.dispatchEvent(event)
+        },
+
+        deployFlyChange(cmd){ // устанавливает свойство deploy в нужное состояние для полета с id (можно перенести в файл flying.js, если поправить)
+            let fly = this.getFlyById(cmd.id);
+            fly.deployed = cmd.deployed;
+            this.centerMapOnObject(fly.photos[0].coords)
+        },
+
+        centerMapOnObject(coords){ // устанавливает экран пользователя по указанным координатам
             this.map_parameters.center = coords
         },
-        clickImage(cmd){
-            let target_fly = this.flying.find(fly=>fly.id == cmd.fly_id)
-            let target_photo = target_fly.photos.find(photo=>photo.id==cmd.photo_id)
-            target_photo.active = true
-            this.flyImageShow = true
-        },
-        clickObject(cmd){
-            let target_object = this.objects.find(object=>object.id==cmd.id)
-            target_object.active = true
-            this.objectImageShow = true
-        },
-        fetchFlying(project_id){
-            this.loadingFly = true
-            this.$http.get('api/fly/get', {params: {'project_id': project_id } })
-                .then((response)=>{
-                    if(response.statusText=='OK'){
-                        this.flying = []
-                        response.data.forEach((fly)=>{
-                            let new_fly = {}
-                            new_fly.id = fly.id
-                            new_fly.author = fly.author
-                            new_fly.name = fly.name
-                            new_fly.robot_type = fly.robot_type
-                            new_fly.camera_type = fly.camera_type
-                            new_fly.at_create = fly.at_create.split('T')[0]
-                            new_fly.at_fly = fly.at_fly
-                            new_fly.commentary = fly.commentary
-                            new_fly.deployed = false
-                            new_fly.photos = []
-                            fly.photos.forEach((photo)=>{
-                                let new_photo = {}
-                                new_photo.id = photo.id
-                                new_photo.name = photo.name
-                                new_photo.active = false
-                                new_photo.coords = photo.coordinate
-                                new_photo.src=process.env.VUE_APP_ROOT_API+'/media/'+photo.image
-                                new_fly.photos.push(new_photo)
-                            })
-                            this.flying.push(new_fly)
-                        })
-                    }
-                })
-                .catch((error)=>{
-                    if(error.name=="Error"){
-                        alert('Нет соединения с сервером (загрузка полетов)')
-                    }
-                    else{
-                        alert('Ошибка обработки ответа (загрузка полетов)')
-                    }
-                })
-                .finally(()=>{
-                    this.loadingFly = false
-                })
-        },
-        fetchObjects(project_id){
-            this.loadingObject = true
-            this.$http.get('api/object/get', {params: {'project_id': project_id } })
-                .then((response)=>{
-                    if(response.statusText=='OK'){
-                        this.objects=[]
-                        response.data.forEach((object)=>{
-                            let new_object = {}
-                            new_object.id = object.id
-                            new_object.name = object.name
-                            new_object.active = false
-                            new_object.at_first = object.at_create.split('T')[0]
-                            new_object.at_last = object.at_update.split('T')[0]
-                            new_object.commentary = object.commentary
-                            new_object.coords = object.coordinate
-                            new_object.objects = []
-                            object.objects.forEach((rec_obj)=>{
-                                let new_rec_obj = {}
-                                new_rec_obj.id = rec_obj.id
-                                new_rec_obj.author = rec_obj.author
-                                new_rec_obj.at_create = rec_obj.at_create.split('T')[0]
-                                new_rec_obj.ref_photo = process.env.VUE_APP_ROOT_API+'/media/'+rec_obj.image
-                                new_rec_obj.commentary = rec_obj.commentary
-                                new_rec_obj.rect = rec_obj.image_box
-                                new_object.objects.push(new_rec_obj)
-                            })
-                            this.objects.push(new_object)
-                        })
-                    }
-                })
-                .catch((error)=>{
-                    if(error.name=="Error"){
-                        alert('Нет соединения с сервером (загрузка объектов)')
-                    }
-                    else{
-                        console.error(error)
-                        alert('Ошибка обработки ответа (загрузка объектов)')
-                    }
-                })
-                .finally(()=>{
-                    this.loadingObject = false
-                })
-        },
-        centeringMap(){
+        centeringMap(){ // центрирование и зумирование карты по данным объектов и полетов
             let max_min_lat = [0,0]
             let max_min_lon = [0,0]
             if (this.objects.length!=0){
@@ -388,121 +243,42 @@ export default {
             this.map_parameters.center = [(max_min_lat[0]+max_min_lat[1])/2, (max_min_lon[0]+max_min_lon[1])/2]
             this.map_parameters.zoom = 6
         },
-        addProjectEvent(){
-            this.addProjectShow = true
-            this.closeSideMenu()
-        },
-        closeSideMenu(){
-            var link = document.getElementById('#'+this.sideMenuProps.target_canvas_id+'_button');
-            var event = new CustomEvent("click")
-            link.dispatchEvent(event)
-        },
-        addFlyEvent(){
-            this.addFlyShow = true
-        },
-        editFlyEvent(fly){
-            this.addFlyShow = true
-            this.editFly = fly
-        },
-        createNewObject(object){
-            this.creatingObject = object
-        },
-        async clickOnMap(){
+        async createNewObjectEvent(){ //создание нового объекта по клику на карту
             if(this.creatingObject){
-                console.log("создать новый объект")
-                let requestData = {}
-                requestData = this.creatingObject
-                requestData.project_id=this.projects.target_project_id
-                requestData.coordinate = this.mouseCoord[0]+';'+this.mouseCoord[1]
-
-
-                // this.creatingObject=null
-                const headers =  {
-                    headers: {'Authorization': 'Bearer ' + this.STATE.token.token}
-                }
-                try{
-                    await this.$http.post('/api/object/create', requestData, headers)
-                    this.flying.forEach(fly=>{
-                        if(fly.id==this.creatingObject.fly_id){
-                            fly.photos.forEach(photo=>{
-                                if(photo.id==this.creatingObject.photo_id){
-                                    photo.active=true
-                                }
-                            })
-                        }
-                    })
-                    this.flyImageShow=true
-                    this.creatingObject = null
-                }
-                catch (e){
-                    console.log(e)
-                }
+                this.createObject(this.target_project_id, this.mouseCoord, this.STATE.token.token)
+                this.setFlyingPhotoActive(this.creatingObject.fly_id, this.creatingObject.photo_id)
+                this.flyImageShow=true
+                this.creatingObject = null
             }
         },
-        async clickOnObject(id){
+        async addDataToObjectEvent(id){ // добавление наблюдения к объекту
             if(this.creatingObject){
-                console.log("создать новый объект")
-                let requestData = {}
-                requestData = this.creatingObject
-                requestData.project_id=this.projects.target_project_id
-                requestData.target_id=id
-                requestData.coordinate = this.mouseCoord[0]+';'+this.mouseCoord[1]
-
-
-                // this.creatingObject=null
-                const headers =  {
-                    headers: {'Authorization': 'Bearer ' + this.STATE.token.token}
-                }
-                try{
-                    await this.$http.post('/api/object/create', requestData, headers)
-                    this.flying.forEach(fly=>{
-                        if(fly.id==this.creatingObject.fly_id){
-                            fly.photos.forEach(photo=>{
-                                if(photo.id==this.creatingObject.photo_id){
-                                    photo.active=true
-                                }
-                            })
-                        }
-                    })
-                    this.flyImageShow=true
-                    this.creatingObject = null
-                }
-                catch (e){
-                    console.log(e)
-                }
+                this.createObject(this.target_project_id, this.mouseCoord, this.STATE.token.token, id)
+                this.setFlyingPhotoActive(this.creatingObject.fly_id, this.creatingObject.photo_id)
+                this.flyImageShow=true
+                this.creatingObject = null
             }
         }
     },
     watch:{
-        flyImageShow(new_v){
+        objectImageShow(new_v){ // после закрытия объекта все объекты становятся неактивными
             if(!new_v){
-                this.flying.forEach(fly => {
-                    fly.photos.forEach(photo => {
-                        photo.active=false
-                    })
-                });
+                this.setAllObjectsInactive()
             }
         },
-        objectImageShow(new_v){
-            if(!new_v){
-                this.objects.forEach(object => {
-                    object.active = false
-                });
-            }
-        },
-        loading(new_v){
+        loading(new_v){ // после завершения загрузки отцентрировать карту
             if(!new_v){
                 this.centeringMap()
             }
         },
-        addFlyShow(new_v){
+        addFlyShow(new_v){ // после закрытия окна создания полета подгрузить новые полеты
             if(!new_v){
                 this.editFly = null
-                this.fetchFlying(this.projects.target_project_id)
+                this.fetchFlying(this.target_project_id)
             }
         }
     },
-    mounted(){
+    mounted(){ // загружаются проекты
         this.fetchProjects()
     }
 }
