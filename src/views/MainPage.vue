@@ -52,8 +52,8 @@
             :flying="flying"
             :objects="objects"
             @deployFlyChange="deployFlyChange"
-            @clickImage="clickFlyImage"
-            @clickObject="clickObject"
+            @clickImage="clickFlyImageEvent"
+            @clickObject="clickObjectEvent"
             @editFly="editFlyEvent"
             @rightClickMap="createNewObjectEvent"
             @rightClickObject="addDataToObjectEvent"
@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import YandexMapComponent from '@/components/YandexMapComponent.vue'
+import YandexMapComponent from '@/components/yandexMapComponent/YandexMapComponent.vue'
 import ToggleButton from '@/components/ToggleButton.vue'
 import ProjectsMenu from '@/components/ProjectsMenu.vue'
 import Loading from '@/components/Loading.vue'
@@ -184,7 +184,6 @@ export default {
             fly.deployed = cmd.deployed;
             this.centerMapOnObject(fly.photos[0].coords)
         },
-
         centerMapOnObject(coords){ // устанавливает экран пользователя по указанным координатам
             this.map_parameters.center = coords
         },

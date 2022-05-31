@@ -68,7 +68,7 @@ export const useFlyingApi = ()=>{
         return flying.value.find(fly => fly.id === id);
     }
 
-    const clickFlyImage = (cmd) => {
+    const clickFlyImageEvent = (cmd) => {
         setFlyingPhotoActive(cmd.fly_id, cmd.photo_id)
         flyImageShow.value = true
     }
@@ -107,7 +107,7 @@ export const useFlyingApi = ()=>{
         addFlyEvent,
         editFlyEvent,
         getFlyById,
-        clickFlyImage,
+        clickFlyImageEvent,
         setAllFlyPhotosInactive,
         setFlyingPhotoActive
     }

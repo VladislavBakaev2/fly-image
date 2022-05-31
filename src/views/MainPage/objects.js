@@ -57,7 +57,7 @@ export const useObjectsApi = ()=>{
             })
     }
 
-    const clickObject = (cmd)=>{
+    const clickObjectEvent = (cmd)=>{
         let target_object = objects.value.find(object=>object.id==cmd.id)
         target_object.active = true
         objectImageShow.value = true
@@ -99,7 +99,7 @@ export const useObjectsApi = ()=>{
         loadingObject,
         objectImageShow,
         fetchObjects,
-        clickObject,
+        clickObjectEvent,
         setCreatingObjectEvent,
         setAllObjectsInactive,
         createObject
