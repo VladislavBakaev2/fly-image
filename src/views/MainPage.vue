@@ -64,6 +64,7 @@
         :projects="searcherProjects"
         @targetUpdate="updateTargetProject"
         @addEvent="addProjectEvent"
+        @deleteProjectEvent="deleteProjectEventWithSideBar"
         v-model="searchQuery"
     />
     <fly-object-menu
@@ -102,6 +103,10 @@
         :project_id="target_project_id"
         :editFly="editFly"
     />
+    <delete-project-window
+        v-model:show="deleteProjectShow"
+        :project="deletingProject"
+    />
 </template>
 
 <script>
@@ -120,6 +125,7 @@ import AddFlyWindow from '../components/addFlyComponent/AddFlyWindow.vue'
 import {useProjectsApi} from '@/views/MainPage/projects.js'
 import {useFlyingApi} from '@/views/MainPage/flying.js'
 import {useObjectsApi} from '@/views/MainPage/objects.js'
+import DeleteProjectWindow from '../components/DeleteProjectWindow.vue'
 
 export default {
     setup(){
@@ -138,6 +144,7 @@ export default {
         ObjectImageComponent,
         AddProjectWindow,
         AddFlyWindow,
+        DeleteProjectWindow,
     },
     data(){
         return {
@@ -172,6 +179,10 @@ export default {
         addProjectEvent(){ // вызов нового окна создания нового проекта
             this.addProjectShow = true
             this.closeSideMenu()
+        },
+        deleteProjectEventWithSideBar(e){
+            this.closeSideMenu()
+            this.deleteProjectEvent(e)
         },
         closeSideMenu(){ // закрыть боковое меню с проектами 
             var link = document.getElementById('#'+this.sideMenuProps.target_canvas_id+'_button');

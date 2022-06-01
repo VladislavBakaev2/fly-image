@@ -23,6 +23,7 @@
                 :key="project.id"
                 :project="project"
                 @click="projectClick(project.id)"
+                @deleteEvent="$emit('deleteProjectEvent', project.id)"
             />
         </div>
         <div class="text-white text-center fs-4 nothing-style" v-else>

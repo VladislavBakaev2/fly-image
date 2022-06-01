@@ -9,6 +9,8 @@ export const useProjectsApi = ()=>{
     const searchQuery = ref('')
     const loadingProject = ref(false)
     const addProjectShow = ref(false)
+    const deleteProjectShow = ref(false)
+    const deletingProject = ref({name:''})
 
     const fetchProjects = ()=>{
         loadingProject.value = true
@@ -42,9 +44,26 @@ export const useProjectsApi = ()=>{
                 loadingProject.value = false
             })
     }
+
+    const getProjectById = (id)=>{
+        var targetProject = null
+        projects.value.forEach((project)=>{
+            if(project.id === id){
+                targetProject = project
+            }
+        })
+        return targetProject
+    }
+
     const searcherProjects =computed(()=>{
         return projects.value.filter(project=>project.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
     })
+
+    const deleteProjectEvent =(id)=>{
+        const project = getProjectById(id)
+        deletingProject.value = project
+        deleteProjectShow.value = true
+    }
 
     return {
         projects,
@@ -53,6 +72,9 @@ export const useProjectsApi = ()=>{
         searcherProjects,
         searchQuery,
         loadingProject,
-        addProjectShow
+        addProjectShow,
+        deleteProjectShow,
+        deletingProject,
+        deleteProjectEvent
     }
 }
