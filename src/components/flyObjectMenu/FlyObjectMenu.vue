@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import MapElementComponent from '@/components/MapElementComponent.vue'
+import MapElementComponent from '@/components/flyObjectMenu/MapElementComponent.vue'
 import ObjectComponent from './ObjectComponent.vue'
 import FlyComponent from './FlyComponent.vue'
 

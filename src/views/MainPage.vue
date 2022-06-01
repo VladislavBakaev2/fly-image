@@ -107,9 +107,9 @@
 <script>
 import YandexMapComponent from '@/components/yandexMapComponent/YandexMapComponent.vue'
 import ToggleButton from '@/components/UI/ToggleButton.vue'
-import ProjectsMenu from '@/components/ProjectsMenu.vue'
+import ProjectsMenu from '@/components/projectMenu/ProjectsMenu.vue'
 import Loading from '@/components/Loading.vue'
-import FlyObjectMenu from '@/components/FlyObjectMenu.vue'
+import FlyObjectMenu from '@/components/flyObjectMenu/FlyObjectMenu.vue'
 import FlyImageComponent from '../components/FlyImageComponent.vue'
 import ObjectImageComponent from '../components/ObjectImageComponent.vue'
 
