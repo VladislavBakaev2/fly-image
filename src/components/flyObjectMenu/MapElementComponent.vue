@@ -8,14 +8,14 @@
                 icon="caret-down-fill"
                 size="2x"
                 variant="light"
-                class="m-0"
+                class="m-1"
                 />
             <BootstrapIcon
                 v-else
                 icon="caret-up-fill"
                 size="2x"
                 variant="light"
-                class="m-0"
+                class="m-1"
                 />
         </div>
         <transition name="fadeHeight">
@@ -80,7 +80,7 @@ export default {
 }
 .button-style{
     background-color: #525252;
-    height: 18px;
+    height: 25px;
     border-top: 1px solid rgb(255, 255, 255);
 }
 .content-style{

@@ -40,7 +40,11 @@
                 
                 <div class="d-flex flex-row justify-content-between mb-1">
                     <label for="control_file">Файл .txt с указанием координат фотографий:</label>
-                    <input @change="uploadTxtFile" type="file" name="control_file" accept=".txt" style="width:40%"/>
+                    <div style="width:40%" class="d-flex flex-row justify-content-between">
+                        <input @change="uploadTxtFile" @input="beforeinput" type="file" name="control_file" accept=".txt"/>
+                        <div v-if="loadingFile==true" style="color:blue;">Загружается...</div>
+                        <div v-if="loadingFile==false" style="color:green;">Загружен</div>
+                    </div>
                 </div>
 
                 <div class="d-flex flex-row justify-content-between mb-4">
@@ -118,6 +122,7 @@ export default {
             errors: null,
             imagesCoordsData: {},
             file: null,
+            loadingFile: null,
             
             flyParams:{
                 flyDate: null,
@@ -133,8 +138,10 @@ export default {
             this.$emit("update:show", false)
             this.images=[]
             this.imagesCoordsData={}
+            this.loadingFile = null
         },
         uploadTxtFile(e){
+            this.loadingFile = false
             this.imagesCoordsData={}
             if(e.target.files[0]){
                 this.file = e.target.files[0]
@@ -229,6 +236,9 @@ export default {
             }
             
             return new File([u8arr], filename, {type:mime});
+        },
+        beforeinput(){
+            this.loadingFile = true
         }
     },
     computed:{
