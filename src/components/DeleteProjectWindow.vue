@@ -41,8 +41,12 @@ export default {
         const schema = yup.object().shape({
         name: yup
             .string()
+            .test(
+                'name-check',
+                'Неверно указано имя проекта',
+                name => this.project.name == name
+            )
             .required("Требуется название!")
-            .oneOf([this.project.name, null], 'Неверно указано имя проекта'),
         });
         return{
             cssModal:{
@@ -59,9 +63,21 @@ export default {
             this.$emit("update:show", false)
         },
         deleteProject(){
-            // const headers =  {
-            //     headers: {'Authorization': 'Bearer ' + this.STATE.token.token}
-            // }
+            const headers =  {
+                headers: {'Authorization': 'Bearer ' + this.STATE.token.token},
+                data: {id: this.project.id}
+            }
+            this.$http.delete('/api/project/delete', headers).then((response)=>{
+                if(response.status==200){
+                    this.dialogHidden()
+                    this.$emit('updateProjects')
+                    alert(`Проект ${this.project.name} удален`)
+                }
+            }).catch((error)=>{
+                if (error.response.status == 400 && error.response.data.error=="forbiden"){
+                    alert('Недостаточно прав для удаления выбранного проекта')
+                }
+            })
         }
     },
     computed:{

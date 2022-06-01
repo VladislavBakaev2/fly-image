@@ -18,7 +18,7 @@
 
             <div class="d-flex flex-column" style="width: 70%">
                 <div class="d-flex flex-row justify-content-between mb-1">
-                    <label for="name">Название полета</label>
+                    <label for="name">Название полета <span class="reqired-field-style">(обязательное поле)</span></label>
                     <input v-model="flyParams.flyName" type="text" name="name" style="width:40%"/>
                 </div>
                 <div class="d-flex flex-row justify-content-between mb-1">
@@ -30,7 +30,7 @@
                     <input v-model="flyParams.camera" type="text" name="camera" style="width:40%"/>
                 </div>
                 <div class="d-flex flex-row justify-content-between mb-1">
-                    <label for="date">Дата полета</label>
+                    <label for="date">Дата полета <span class="reqired-field-style">(обязательное поле)</span></label>
                     <Datepicker v-model="flyParams.flyDate" style="width:40%"></Datepicker>
                 </div>
                 <div class="d-flex flex-row justify-content-between mb-1">
@@ -319,5 +319,8 @@ export default {
     border-radius   : 3px;
 	color			: #fffefe;
     font-size: 12px;
+}
+.reqired-field-style{
+    color: gray;
 }
 </style>

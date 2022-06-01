@@ -106,6 +106,7 @@
     <delete-project-window
         v-model:show="deleteProjectShow"
         :project="deletingProject"
+        @updateProjects="fetchProjects"
     />
 </template>
 
