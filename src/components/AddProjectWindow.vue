@@ -17,7 +17,7 @@
 <script>
 import { Form, Field, ErrorMessage } from "vee-validate";
 import * as yup from "yup";
-import ModalWindow from './ModalWindow.vue'
+import ModalWindow from './UI/ModalWindow.vue'
 import { mapGetters } from 'vuex'
 
 

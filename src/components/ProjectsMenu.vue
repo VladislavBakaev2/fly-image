@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import OffCanvasBody from '@/components/OffCanvasBody.vue'
+import OffCanvasBody from '@/components/UI/OffCanvasBody.vue'
 import ProjectView from './ProjectView.vue'
 
 export default {

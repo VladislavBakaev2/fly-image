@@ -64,7 +64,7 @@
 
 <script>
 import { yandexMap, ymapMarker} from 'vue-yandex-maps'
-import ContextMenuComponent from '../ContextMenuComponent.vue'
+import ContextMenuComponent from '../UI/ContextMenuComponent.vue'
 
 import axios from "axios"
 

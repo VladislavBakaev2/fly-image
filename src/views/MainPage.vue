@@ -106,7 +106,7 @@
 
 <script>
 import YandexMapComponent from '@/components/yandexMapComponent/YandexMapComponent.vue'
-import ToggleButton from '@/components/ToggleButton.vue'
+import ToggleButton from '@/components/UI/ToggleButton.vue'
 import ProjectsMenu from '@/components/ProjectsMenu.vue'
 import Loading from '@/components/Loading.vue'
 import FlyObjectMenu from '@/components/FlyObjectMenu.vue'
@@ -115,7 +115,7 @@ import ObjectImageComponent from '../components/ObjectImageComponent.vue'
 
 import { mapGetters } from 'vuex'
 import AddProjectWindow from '../components/AddProjectWindow.vue'
-import AddFlyWindow from '../components/AddFlyWindow.vue'
+import AddFlyWindow from '../components/addFlyComponent/AddFlyWindow.vue'
 
 import {useProjectsApi} from '@/views/MainPage/projects.js'
 import {useFlyingApi} from '@/views/MainPage/flying.js'

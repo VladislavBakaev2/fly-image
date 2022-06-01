@@ -54,28 +54,19 @@
                     :key="index"
                     class="p-2"
                 >
-                    <div v-if="image.fileUrl"
-                        class="d-flex flex-column align-items-center"
-                    >
-                        <img 
-                            :src="image.fileUrl.src" 
-                            class="preview" 
-                            height="100"
-                            :class="{'error-image':invalidImages.includes(image.name)}"
-                            />
-                        <div style="font-size: 12px">
-                            {{image.name}}
-                        </div>
-                    </div>
                     <div
-                        v-else
                         class="d-flex flex-column justify-content-center align-items-center"
-                        style="width: 100px; height: 100px"
+                        style="width: 150px; height: 100px"
                     >
                         <div style="font-size: 15px">{{image.name}}</div>
                         <div style="font-size: 15px">Загрузка: {{ image.currentProgress }}</div>
                     </div>
                 </div>
+            </div>
+            <div
+                v-if="images.length!=0"
+            >
+                Загружено фотографий {{images.length}}/{{countImages}}
             </div>
             <button @click="addButton" class="btn button-style">Сохранить полет</button>
                 <!-- <div class="tooltip-style">
@@ -88,73 +79,15 @@
 </template>
 
 <script>
-import ModalWindow from './ModalWindow.vue'
+import ModalWindow from '../UI/ModalWindow.vue'
 import { mapGetters } from 'vuex'
-import { ref } from 'vue'
-
+import { useLoadImagesApi } from './loadImages.js'
 
 export default {
     setup() {
-        let images = ref([])
-        let inputData = null
-        const front = 2
-        let currentStep = 0
-
-        function handleEvent(event, image, reader) {
-            if (['loadend', 'load'].includes(event.type)) {
-                image.currentProgress = '100%';
-                image.fileUrl = new Image()
-                image.fileUrl.src = reader.result;
-                if(images.value.filter(data=>data.fileUrl==null)==0){
-                    currentStep+=1
-                    setTimeout(loadDataPiece(), 500)
-                }
-            }
-            if (event.type === 'progress') {
-                image.currentProgress = `${(event.loaded / image.totalSize).toFixed(2) * 100}%`;
-            }
-            if (event.type === 'loadstart') {
-                image.totalSize = event.total;
-            }
-        }
-
-        function addListeners(reader, image) {
-            reader.addEventListener('loadstart', (e) => handleEvent(e, image, reader)); 
-            reader.addEventListener('load', (e) => handleEvent(e, image, reader));
-            reader.addEventListener('loadend', (e) => handleEvent(e, image, reader));
-            reader.addEventListener('progress', (e) => handleEvent(e, image, reader));
-            reader.addEventListener('error', (e) => handleEvent(e, image, reader));
-            reader.addEventListener('abort', (e) => handleEvent(e, image, reader));
-        }
-
-        function loadDataPiece(){
-            let end = inputData.length > currentStep*front + front ? currentStep*front + front : inputData.length
-            for(let i=currentStep*front; i<end; i++){
-                let selectedFile = inputData[i]
-                if (selectedFile) {
-                    const reader = new FileReader();
-                    images.value.push({
-                        fileUrl: null,
-                        totalSize: 0,
-                        currentProgress: '0%',
-                        name: selectedFile.name
-                    })
-                    addListeners(reader, images.value[images.value.length-1]);
-                    reader.readAsDataURL(selectedFile);                
-                }
-            }
-        }
-
-        function handleSelected(e) {
-            images.value=[]
-            inputData = e.target.files
-            currentStep = 0
-            loadDataPiece()
-        }
-
+        const loadImagesApi = useLoadImagesApi()
         return {
-            images,
-            handleSelected
+            ...loadImagesApi
         }
     },
     props:{

@@ -52,8 +52,8 @@
 </template>
 
 <script>
-import DragZoomComponent from './DragZoomComponent.vue'
-import ModalWindow from './ModalWindow.vue'
+import DragZoomComponent from './UI/DragZoomComponent.vue'
+import ModalWindow from './UI/ModalWindow.vue'
 export default {
     props:{
         show:{
