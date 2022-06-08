@@ -35,6 +35,27 @@
                     />
                 </div>
             </div>
+            <div class="d-flex flex-row align-items-center justify-content-center">
+                <div>
+                    <button type="button" class="btn btn-outline-secondary" @click="cliclToLeftEvent" :disabled="currentActivePhotoIndex==0">
+                        <BootstrapIcon
+                            :icon="currentActivePhotoIndex==0?'caret-left':'caret-left-fill'"
+                            size="md"
+                            variant="light"
+                        />
+                    </button>
+                </div>
+                <div class="m-1 text-white" >{{currentActivePhotoIndex+1}}/{{flyPhotosCount}}</div>
+                <div>
+                    <button type="button" class="btn btn-outline-secondary"  @click="clickToRightEvent" :disabled="(currentActivePhotoIndex+1)==flyPhotosCount">
+                        <BootstrapIcon
+                            :icon="(currentActivePhotoIndex+1)==flyPhotosCount?'caret-right':'caret-right-fill'"
+                            size="md"
+                            variant="light"
+                        />
+                    </button>
+                </div>
+            </div>
             <div v-if="$store.state.account.status.loggedIn" class="d-flex flex-column w-50">
                 <div class="d-flex flex-row justify-content-between mb-1">
                     <label for="name" class="text-white">Название объекта</label>
@@ -87,6 +108,18 @@ export default {
         createObjectEvent(){
             this.$emit('createObject',  {...this.object, rect:this.drawn_rectangle, photo_id: this.activePhoto.photo.id, fly_id: this.activePhoto.fly.id})
             this.dialogHidden()
+        },
+        cliclToLeftEvent(){
+            const fly_id = this.activePhoto.fly.id
+            const targetPhotoIndex = this.currentActivePhotoIndex-1
+            const photo_id = this.activePhoto.fly.photos[targetPhotoIndex].id
+            this.$emit('updateActivePhoto', {fly_id, photo_id})
+        },
+        clickToRightEvent(){
+            const fly_id = this.activePhoto.fly.id
+            const targetPhotoIndex = this.currentActivePhotoIndex+1
+            const photo_id = this.activePhoto.fly.photos[targetPhotoIndex].id
+            this.$emit('updateActivePhoto', {fly_id, photo_id})
         }
     },
     computed:{
@@ -102,6 +135,17 @@ export default {
                 }
             }
             return undefined
+        },
+        flyPhotosCount(){
+            return this.activePhoto.fly.photos.length
+        },
+        currentActivePhotoIndex(){
+            for(let i=0; i< this.flyPhotosCount; i++){
+                if(this.activePhoto.fly.photos[i].id == this.activePhoto.photo.id){
+                    return i
+                }
+            }
+            return null
         }
     }
 }

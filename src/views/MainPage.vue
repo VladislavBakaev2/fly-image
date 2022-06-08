@@ -103,6 +103,7 @@
         v-model:show="flyImageShow"
         :flying="flying"
         @createObject="setCreatingObjectEvent"
+        @updateActivePhoto="updateActivePhotoEvent($event); centerMapOnObject(activeFlyPhoto.photo.coords)"
     />
     <object-image-component
         v-model:show="objectImageShow"

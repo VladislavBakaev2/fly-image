@@ -1,4 +1,4 @@
-import { ref, getCurrentInstance, watch } from 'vue'
+import { ref, getCurrentInstance, watch, computed } from 'vue'
 
 export const useFlyingApi = ()=>{
     const app = getCurrentInstance()
@@ -90,6 +90,25 @@ export const useFlyingApi = ()=>{
         })
     }
 
+    const updateActivePhotoEvent = (cmd) => {
+        setAllFlyPhotosInactive()
+        setFlyingPhotoActive(cmd.fly_id, cmd.photo_id)
+    }
+
+    const activeFlyPhoto = computed(()=>{
+        for(let i=0; i< flying.value.length; i++){
+            for(let j=0; j< flying.value[i].photos.length; j++){
+                if(flying.value[i].photos[j].active){
+                    return {
+                        photo: flying.value[i].photos[j],
+                        fly: flying.value[i]
+                    }
+                }
+            }
+        }
+        return undefined
+    })
+
     watch(flyImageShow, (new_v) => {
         if(!new_v){
             setAllFlyPhotosInactive()
@@ -103,12 +122,14 @@ export const useFlyingApi = ()=>{
         creatingFly,
         addFlyShow,
         editFly,
+        activeFlyPhoto,
         fetchFlying,
         addFlyEvent,
         editFlyEvent,
         getFlyById,
         clickFlyImageEvent,
         setAllFlyPhotosInactive,
-        setFlyingPhotoActive
+        setFlyingPhotoActive,
+        updateActivePhotoEvent,
     }
 }
