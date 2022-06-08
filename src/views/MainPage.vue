@@ -274,7 +274,6 @@ export default {
                 this.createObject(this.target_project_id, this.mouseCoord, this.STATE.token.token)
                 this.setFlyingPhotoActive(this.creatingObject.fly_id, this.creatingObject.photo_id)
                 this.flyImageShow=true
-                this.creatingObject = null
             }
         },
         async addDataToObjectEvent(id){ // добавление наблюдения к объекту
@@ -282,7 +281,14 @@ export default {
                 this.createObject(this.target_project_id, this.mouseCoord, this.STATE.token.token, id)
                 this.setFlyingPhotoActive(this.creatingObject.fly_id, this.creatingObject.photo_id)
                 this.flyImageShow=true
-                this.creatingObject = null
+            }
+        },
+        checkLoadFlyImage(){
+            if(!this.loadingFly && !this.loadingObject){
+                this.centeringMap()
+            }
+            else{
+                setTimeout(this.checkLoadFlyImage, 100)
             }
         }
     },
@@ -292,15 +298,20 @@ export default {
                 this.setAllObjectsInactive()
             }
         },
-        loading(new_v){ // после завершения загрузки отцентрировать карту
-            if(!new_v){
-                this.centeringMap()
+        target_project_id(new_v){ // после завершения загрузки отцентрировать карту
+            if(new_v){
+                setTimeout(this.checkLoadFlyImage,100)
             }
         },
         addFlyShow(new_v){ // после закрытия окна создания полета подгрузить новые полеты
             if(!new_v){
                 this.editFly = null
                 this.fetchFlying(this.target_project_id)
+            }
+        },
+        creatingObject(new_v){
+            if(new_v==null){
+                this.fetchObjects(this.target_project_id)
             }
         }
     },

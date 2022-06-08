@@ -85,7 +85,9 @@ export const useObjectsApi = ()=>{
         }
         try{
             const response = await http.post('/api/object/create', requestData, headers)
-            console.log(response)
+            if(response.status == 201){
+                creatingObject.value = null
+            }
         }
         catch (e){
             console.error(e)

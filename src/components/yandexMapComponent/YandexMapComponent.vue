@@ -177,7 +177,12 @@ export default {
                 this.$emit('update:mouseCoord', [...ll,response.data.data[0]])
             }
         })
-    }
+        }
+    },
+    watch:{
+        objects(){
+            setTimeout(this.key+=1, 100)
+        }
     }
 }
 </script>
