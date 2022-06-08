@@ -63,10 +63,9 @@ export default {
                     this.errorMessage=null
                     this.dialogHidden()
                     alert(`Проект с именем "${this.nameProject}" создан`)
-                    this.$emit('updateProjects')
+                    this.$emit('updateProjects', response.data.id)
                 }
             }).catch((error)=>{
-                // if(error.response)
                 if(error.response.data.errors){
                     error.response.data.errors.forEach((error)=>{
                         if(error.indexOf('уникальным')!=-1){

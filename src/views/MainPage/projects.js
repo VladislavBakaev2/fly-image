@@ -18,7 +18,6 @@ export const useProjectsApi = ()=>{
             .then((response)=>{
                 if(response.statusText=='OK'){
                     projects.value = []
-                    target_project_id.value = null
                     response.data.forEach((project)=>{
                         let new_project = {}
                         new_project.id = project.id
@@ -30,6 +29,9 @@ export const useProjectsApi = ()=>{
                         new_project.at_update = project.at_update.split('T')[0]
                         projects.value.push(new_project)
                     })
+                    if (getProjectById(target_project_id.value)==null){
+                        target_project_id.value = null
+                    }
                 }
             })
             .catch((error)=>{
@@ -55,6 +57,11 @@ export const useProjectsApi = ()=>{
         return targetProject
     }
 
+    const targetProject = computed(()=>{
+        const project = getProjectById(target_project_id.value)
+        return project
+    })
+
     const searcherProjects =computed(()=>{
         return projects.value.filter(project=>project.name.toLowerCase().includes(searchQuery.value.toLowerCase()))
     })
@@ -68,13 +75,15 @@ export const useProjectsApi = ()=>{
     return {
         projects,
         target_project_id,
-        fetchProjects,
         searcherProjects,
         searchQuery,
         loadingProject,
         addProjectShow,
         deleteProjectShow,
         deletingProject,
-        deleteProjectEvent
+        targetProject,
+        deleteProjectEvent,
+        getProjectById,
+        fetchProjects,
     }
 }

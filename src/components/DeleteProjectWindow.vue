@@ -75,7 +75,7 @@ export default {
                 }
             }).catch((error)=>{
                 if (error.response.status == 400 && error.response.data.error=="forbiden"){
-                    alert('Недостаточно прав для удаления выбранного проекта')
+                    alert('Недостаточно прав для удаления выбранного проекта. Удалить проект может только его создатель.')
                 }
             })
         }

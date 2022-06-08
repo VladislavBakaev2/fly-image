@@ -108,7 +108,7 @@ export default {
                     version: '2.1'
                 },
                 controls: ['rulerControl', 'typeSelector', 'zoomControl'],
-                detailedControls: {'typeSelector': {position:{top:90, right:0}}},
+                detailedControls: {'typeSelector': {position:{top:52, right:252}}},
                 defaultMapEvents: [
                     'actionend',
                     'balloonclose',
@@ -166,8 +166,8 @@ export default {
         let ll
         try{
             ll = e.get('coords')
-            ll[0] = ll[0].toFixed(4)
-            ll[1] = ll[1].toFixed(4)
+            ll[0] = ll[0].toFixed(7)
+            ll[1] = ll[1].toFixed(7)
         }
         catch{
             return

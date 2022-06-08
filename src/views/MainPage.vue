@@ -39,10 +39,25 @@
             </div>
         </div>
     </div>
-    <div class="mouse-coord-info d-flex flex-row text-light justify-content-between align-items-center">
-        <div>lat: {{mouseCoord[0]}}</div>
-        <div>lon: {{mouseCoord[1]}}</div>
-        <div>alt: {{mouseCoord[2]}}</div>
+    <div class="info-div text-light">
+        <div v-if="targetProject" class="d-flex felx-row justify-content-between">
+            <div>Проект:</div>
+            <div>{{targetProject.name}}</div>
+        </div>
+        <hr style="margin: 5px 0;">
+        <div>Координаты курсора:</div>
+        <div class="d-flex felx-row justify-content-between mouse-coord-style">
+            <div>lat:</div>
+            <div>{{mouseCoord[0]!=0?mouseCoord[0]:'???'}}</div>
+        </div>
+        <div class="d-flex felx-row justify-content-between mouse-coord-style">
+            <div>lon:</div>
+            <div>{{mouseCoord[1]!=0?mouseCoord[1]:'???'}}</div>
+        </div>
+        <div class="d-flex felx-row justify-content-between mouse-coord-style">
+            <div>alt:</div>
+            <div>{{mouseCoord[2]?mouseCoord[2]:'???'}}</div>
+        </div>
     </div>
     <div class="all-window-height w-100">
         <yandex-map-component
@@ -95,7 +110,7 @@
     />
     <add-project-window
         v-model:show="addProjectShow"
-        @updateProjects="fetchProjects"
+        @updateProjects="fetchProjects(); fetchFlying($event); fetchObjects($event); target_project_id=$event"
     />
     <add-fly-window
         v-model:show="addFlyShow"
@@ -303,18 +318,19 @@ export default {
     position: fixed;
     z-index: 1;
 }
-.mouse-coord-info{
+.info-div{
     position: fixed;
     width: 250px;
-    height: 30px;
     background-color: rgba(76, 74, 74, 0.781);
+    border-radius: 3px;
     right: 0;
-    top:50px;
+    top:52px;
     z-index: 3;
-    border-end-start-radius: 5px;
-    border-bottom: 1px solid lightgray;
-    border-left: 1px solid lightgray;
     padding: 0 5px 0 5px;
+}
+.mouse-coord-style{
+    font-size: 0.85rem;
+    margin-left: 7px;
 }
 .account-login-logout{
     width: 100px;
