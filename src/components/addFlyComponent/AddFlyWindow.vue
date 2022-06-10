@@ -185,6 +185,9 @@ export default {
                 date: this.flyParams.flyDate,
                 project: this.project_id
             }
+            
+            flyData.coords = Object.values(this.imagesCoordsData)
+
 
             if(this.flyParams.robot){
                 flyData.robot = this.flyParams.robot

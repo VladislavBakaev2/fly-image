@@ -36,6 +36,7 @@ export const useFlyingApi = ()=>{
                         new_fly.at_create = fly.at_create.split('T')[0]
                         new_fly.at_fly = fly.at_fly
                         new_fly.commentary = fly.commentary
+                        new_fly.images_coords= JSON.parse(fly.images_coords)
                         new_fly.deployed = false
                         new_fly.photos = []
                         fly.photos.forEach((photo)=>{

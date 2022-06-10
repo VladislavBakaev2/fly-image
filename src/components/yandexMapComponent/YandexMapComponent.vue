@@ -40,6 +40,12 @@
                 @ballonclose="ballonCloseFlyEvent('point'+fly.id+':'+point.id, point.id, fly.id)"
                 @contextmenu="closeFlyEmit(fly)"
             />
+            <ymap-marker 
+                marker-type="polyline"
+                :coords="fly.images_coords"
+                :marker-id="Date.now()" 
+                :marker-stroke="{color: '#0044ff', width: 3}"
+            />
         </div>
         <ymap-marker
             v-for="object in objects"
