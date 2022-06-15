@@ -142,6 +142,7 @@ export default {
             var img = new Image();
             var myCanvas = document.getElementById('canvas');
             var ctx = myCanvas.getContext('2d');
+            ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
             img.onload = ()=>{
                 myCanvas.width = img.width
                 myCanvas.height = img.height

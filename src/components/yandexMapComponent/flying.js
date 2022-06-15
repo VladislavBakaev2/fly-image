@@ -59,10 +59,13 @@ export const useFlyingMapApi = ( props, context)=>{
     }
 
     const nonDeployedFlying = computed(()=>{
-        return props.flying.filter(fly=>!fly.deployed)
+        return props.flying.filter(fly=>!fly.deployed&&fly.photos.length!=0)
     })
     const deployedFlying = computed(()=>{
-        return props.flying.filter(fly=>fly.deployed)
+        return props.flying.filter(fly=>fly.deployed&&fly.photos.length!=0)
+    })
+    const zeroImageFly = computed(()=>{
+        return props.flying.filter(fly=>!fly.deployed&&fly.photos.length==0)
     })
 
     watch(nonDeployedFlying, ()=>{
@@ -73,6 +76,7 @@ export const useFlyingMapApi = ( props, context)=>{
         menu,
         nonDeployedFlying,
         deployedFlying,
+        zeroImageFly,
         key,
         balloonTemplateFly,
         balloonOpenFlyEvent,

@@ -48,6 +48,9 @@ export const useFlyingApi = ()=>{
                             new_photo.src=process.env.VUE_APP_ROOT_API+'/media/'+photo.image
                             new_fly.photos.push(new_photo)
                         })
+                        if(new_fly.photos.length==0){
+                            new_fly.photos.push({'coords':[55.737722+Math.random(), 37.732367]})
+                        }
                         flying.value.push(new_fly)
                     })
                 }

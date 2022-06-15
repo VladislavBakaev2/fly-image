@@ -24,6 +24,15 @@
             @click="flyOpenEmit(fly)"
             @contextmenu="openContextMenuEvent($event, fly)"
         />
+        <ymap-marker
+            v-for="fly in zeroImageFly"
+            :marker-id="fly.name+':'+fly.id"
+            :key="fly.id"
+            :coords="fly.photos[0].coords"
+            :icon="{content: `${fly.name}`}"
+            :clusterName="'flying'"
+            @contextmenu="openContextMenuEvent($event, fly)"
+        />
         <div v-for="fly in deployedFlying"
             :key="fly.id"
         >

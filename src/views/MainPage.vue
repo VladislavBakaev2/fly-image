@@ -225,13 +225,6 @@ export default {
                 max_min_lon[0] = this.objects[0].coords[1]
                 max_min_lon[1] = this.objects[0].coords[1]
             }
-            else if(this.flying.length!=0){
-                max_min_lat[0] = this.flying[0].photos[0].coords[0]
-                max_min_lat[1] = this.flying[0].photos[0].coords[0]
-
-                max_min_lon[0] = this.flying[0].photos[0].coords[1]
-                max_min_lon[1] = this.flying[0].photos[0].coords[1]                
-            }
             else{
                 return
             }
@@ -249,23 +242,6 @@ export default {
                 else if(object.coords[1]<max_min_lon[1]){
                     max_min_lon[1] = object.coords[1]
                 }
-            })
-            this.flying.forEach((fly)=>{
-                fly.photos.forEach((photo)=>{
-                    if (photo.coords[0]>max_min_lat[0]){
-                        max_min_lat[0]=photo.coords[0]
-                    }
-                    else if(photo.coords[0]<max_min_lat[1]){
-                        max_min_lat[1] = photo.coords[0]
-                    }
-                    
-                    if (photo.coords[1]>max_min_lon[0]){
-                        max_min_lon[0] = photo.coords[1]
-                    }
-                    else if(photo.coords[1]<max_min_lon[1]){
-                        max_min_lon[1] = photo.coords[1]
-                    }
-                })
             })
             this.map_parameters.center = [(max_min_lat[0]+max_min_lat[1])/2, (max_min_lon[0]+max_min_lon[1])/2]
             this.map_parameters.zoom = 6
