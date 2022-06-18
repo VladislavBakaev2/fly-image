@@ -38,7 +38,7 @@
                     <textarea v-model="flyParams.commentary" rows="2" name="comment" style="width:40%"/>
                 </div>
                 
-                <div class="d-flex flex-row justify-content-between mb-1">
+                <div v-if="!editFly" class="d-flex flex-row justify-content-between mb-1">
                     <label for="control_file">Файл .txt с указанием координат фотографий:</label>
                     <div style="width:40%" class="d-flex flex-row justify-content-between">
                         <input @change="uploadTxtFile" @input="beforeinput" type="file" name="control_file" accept=".txt"/>
@@ -185,9 +185,12 @@ export default {
                 date: this.flyParams.flyDate,
                 project: this.project_id
             }
-            
-            flyData.coords = Object.values(this.imagesCoordsData)
-
+            if(!this.editFly){
+                flyData.coords = this.imagesCoordsData
+            }
+            else{
+                this.imagesCoordsData = this.editFly.images_coords
+            }
 
             if(this.flyParams.robot){
                 flyData.robot = this.flyParams.robot
@@ -206,11 +209,12 @@ export default {
                 formData.append('fly', JSON.stringify(flyData))
                 this.$http.post('api/fly/create', formData, headers).then((response)=>{
                     if(response.status==201){
-                        this.$emit('update:loading', false)
                         alert('Полет успешно сохранен в базу данных')
                     }
                 }).catch((error)=>{
                     console.log(error)
+                }).finally(()=>{
+                    this.$emit('update:loading', false)
                 })
             }
             else{
@@ -223,6 +227,8 @@ export default {
                     }
                 }).catch((error)=>{
                     console.log(error)
+                }).finally(()=>{
+                    this.$emit('update:loading', false)
                 })
             }
         },

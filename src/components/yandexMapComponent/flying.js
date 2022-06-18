@@ -1,9 +1,13 @@
-import { ref, computed, watch } from 'vue'
+import { ref, getCurrentInstance,computed, watch } from 'vue'
+import { useStore } from 'vuex'
 
 export const useFlyingMapApi = ( props, context)=>{
+    const app = getCurrentInstance()
+    const http = app.appContext.config.globalProperties.$http
 
     const key = ref(0)
     const menu = ref(null);
+    const store = useStore()
 
     const active_photo = {
         fly_id: null,
@@ -13,8 +17,6 @@ export const useFlyingMapApi = ( props, context)=>{
     const contextMenuParams = {
         target: null
     }
-
-
 
     const balloonTemplateFly = (point, fly,index)=>{
         return `
@@ -51,9 +53,24 @@ export const useFlyingMapApi = ( props, context)=>{
         menu.value.open(e);
         contextMenuParams.target = fly
     }
+
     const contextDeleteEvent = ()=>{
-        console.log('delete')
+        const headers =  {
+            headers: {'Authorization': 'Bearer ' + store.state.account.token.token},
+            data: {id: contextMenuParams.target.id}
+        }
+        http.delete('/api/fly/delete', headers).then((response)=>{
+            if(response.status==200){
+                context.emit('updateFlying')
+                alert(`Полет ${contextMenuParams.target.name} удален`)
+            }
+        }).catch((error)=>{
+            if (error.response.status == 400 && error.response.data.error=="forbiden"){
+                alert('Недостаточно прав для удаления выбранного полета. Удалить полет может только его создатель.')
+            }
+        })
     }
+
     const contextEditEvent = () => {
         context.emit('editFly', contextMenuParams.target)
     }

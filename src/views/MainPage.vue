@@ -70,6 +70,8 @@
             @clickImage="clickFlyImageEvent"
             @clickObject="clickObjectEvent"
             @editFly="editFlyEvent"
+            @updateFlying="fetchFlying(target_project_id)"
+            @updateObjects="fetchObjects(target_project_id)"
             @rightClickMap="createNewObjectEvent"
             @rightClickObject="addDataToObjectEvent"
         />
@@ -210,7 +212,9 @@ export default {
         deployFlyChange(cmd){ // устанавливает свойство deploy в нужное состояние для полета с id (можно перенести в файл flying.js, если поправить)
             let fly = this.getFlyById(cmd.id);
             fly.deployed = cmd.deployed;
-            this.centerMapOnObject(fly.photos[0].coords)
+            if(fly.photos.length!=0){
+                this.centerMapOnObject(fly.photos[0].coords)
+            }
         },
         centerMapOnObject(coords){ // устанавливает экран пользователя по указанным координатам
             this.map_parameters.center = coords

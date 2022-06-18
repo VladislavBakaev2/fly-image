@@ -51,7 +51,7 @@
             />
             <ymap-marker 
                 marker-type="polyline"
-                :coords="fly.images_coords"
+                :coords="Object.values(fly.images_coords)"
                 :marker-id="Date.now()" 
                 :marker-stroke="{color: '#0044ff', width: 3}"
             />
