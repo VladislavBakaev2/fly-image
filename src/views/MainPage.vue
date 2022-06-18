@@ -110,6 +110,7 @@
     <object-image-component
         v-model:show="objectImageShow"
         :object="activeObject"
+        @deleteObjectElemEvent="deleteObjectElemEvent"
     />
     <add-project-window
         v-model:show="addProjectShow"

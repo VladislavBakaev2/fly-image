@@ -94,6 +94,14 @@ export const useObjectsApi = ()=>{
         }
     }
 
+    const deleteObjectElemEvent = (data)=>{
+        objects.value.forEach((object)=>{
+            if(data.id == object.id){
+                object.objects.splice(data.arr_id,1)
+            }
+        })
+    }
+
     return {
         objects,
         creatingObject,
@@ -104,6 +112,7 @@ export const useObjectsApi = ()=>{
         clickObjectEvent,
         setCreatingObjectEvent,
         setAllObjectsInactive,
-        createObject
+        createObject,
+        deleteObjectElemEvent
     }
 }
