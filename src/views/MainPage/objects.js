@@ -95,11 +95,26 @@ export const useObjectsApi = ()=>{
     }
 
     const deleteObjectElemEvent = (data)=>{
-        objects.value.forEach((object)=>{
-            if(data.id == object.id){
-                object.objects.splice(data.arr_id,1)
+        if(data.arr_id){
+            objects.value.forEach((object)=>{
+                if(data.id == object.id){
+                    object.objects.splice(data.arr_id,1)
+                }
+            })
+        }
+        else{
+            let target_index = -1
+            for(let i=0; i<objects.value.length; i++){
+                if(data.id == objects.value[i].id){
+                    target_index = i
+                }
             }
-        })
+            if (target_index !=-1){
+                objects.value.splice(target_index,1)
+            }
+
+        }
+
     }
 
     return {

@@ -100,7 +100,7 @@ export default {
             }
             this.$http.delete('/api/object/delete', headers).then((response)=>{
                 if(response.status==200){
-                    alert(`Зпись удалена`)
+                    alert(`Запись удалена`)
                     if(this.target_object_id==this.target_object_id==this.object.objects.length-1){
                         this.target_object_id--
                         this.$emit('deleteObjectElemEvent', {id: this.object.id, arr_id: this.target_object_id+1})
@@ -108,6 +108,23 @@ export default {
                     else{
                         this.$emit('deleteObjectElemEvent', {id: this.object.id, arr_id: this.target_object_id})
                     }
+                }
+            }).catch((error)=>{
+                if (error.response.status == 400 && error.response.data.error=="forbiden"){
+                    alert('Недостаточно прав для удаления выбранного объекта. Удалить объект может только его создатель.')
+                }
+            })
+        },
+        deleteAllObjectEvent(){
+            const headers =  {
+                headers: {'Authorization': 'Bearer ' + this.STATE.token.token},
+                data: {id: this.object.id}
+            }
+            this.$http.delete('/api/objects/delete', headers).then((response)=>{
+                if(response.status==200){
+                    alert(`Все записи удалены удалена`)
+                    this.$emit('deleteObjectElemEvent', {id: this.object.id})
+                    this.dialogHidden()
                 }
             }).catch((error)=>{
                 if (error.response.status == 400 && error.response.data.error=="forbiden"){
