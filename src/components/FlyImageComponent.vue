@@ -9,6 +9,7 @@
             :img="activePhoto.photo.src"
             v-model:drawn_rectangle="drawn_rectangle"
         >
+        <div v-if="$store.state.account.status.loggedIn" class="prompt-style text-white fs-5">Зажмите правую кномпу мыши для выделения объекта</div>
         <div class="data-style d-flex flex-column align-items-center">
             <div class="d-flex flex-row text-light w-100">
                 <div class="d-flex flex-row justify-content-between w-100">
@@ -174,5 +175,11 @@ export default {
     align-self: center;
     background-color: #525252;
     color: white;
+}
+.prompt-style{
+    position: absolute;
+    padding: 5px;
+    background-color: rgb(95, 95, 95, 0.8);
+    border-end-end-radius: 5px;
 }
 </style>
