@@ -16,14 +16,14 @@
                             <div class="d-flex flex-row justify-content-between"><div>Дата создания объекта</div><div>{{object.at_first}}</div></div>
                             <div class="d-flex flex-row justify-content-between"><div>Дата последней записи</div><div>{{object.at_last}}</div></div>
                             <div class="d-flex flex-row justify-content-between"><div>Комментарий</div><div class="commentary-style">{{object.commentary}}</div></div>
-                            <button type="button" class="btn button-style" @click="deleteAllObjectEvent">Удалить все записи и объект</button>
+                            <button v-if="$store.state.account.status.loggedIn" type="button" class="btn button-style" @click="deleteAllObjectEvent">Удалить все записи и объект</button>
                         </div>
                         <div class="w-50 d-flex flex-column" style="margin-left: 10px">
                             <div class="d-flex flex-row justify-content-between"><div>Координаты</div><div>{{object.coords}}</div></div>
                             <div class="d-flex flex-row justify-content-between"><div>Автор записи</div><div>{{object.objects[target_object_id].author}}</div></div>
                             <div class="d-flex flex-row justify-content-between"><div>Дата создания текущей записи</div><div>{{object.objects[target_object_id].at_create}}</div></div>
                             <div class="d-flex flex-row justify-content-between"><div>Комментарий к текущей записи</div><div class="commentary-style">{{object.objects[target_object_id].commentary}}</div></div>
-                            <button type="button" class="btn button-style" @click="deleteObjectEvent" :disabled="object.objects.length==1" >Удалить текущую запись об объекте</button>
+                            <button v-if="$store.state.account.status.loggedIn" type="button" class="btn button-style" @click="deleteObjectEvent" :disabled="object.objects.length==1" >Удалить текущую запись об объекте</button>
                         </div>
                     </div>
                     <div class="d-flex align-items-center" style="cursor: pointer; margin-left: 10px;"
