@@ -194,11 +194,11 @@ export default {
         })
         }
     },
-    watch:{
-        objects(){
-            setTimeout(this.key+=1, 100)
-        }
-    }
+    //watch:{
+        // objects(){
+        //    setTimeout(this.key+=1, 100)
+        //}
+    //}
 }
 </script>
 
